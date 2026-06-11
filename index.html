@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Demande de devis — Atelier Agents IA</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: Segoe UI, Arial, sans-serif;
+  font-size: 14px;
+  color: #222;
+  background: #efefef;
+  padding: 28px 20px 48px;
+}
+
+h1 {
+  font-size: 17px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 6px;
+}
+.subtitle {
+  font-size: 12px;
+  color: #888;
+  margin-bottom: 22px;
+}
+
+.bloc {
+  background: #fff;
+  border: 1px solid #d4d4d4;
+  border-radius: 4px;
+  padding: 18px 20px;
+  margin-bottom: 14px;
+}
+.bloc h2 {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #777;
+  font-weight: 600;
+  margin-bottom: 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #eee;
+}
+
+.field { margin-bottom: 11px; }
+.field:last-child { margin-bottom: 0; }
+
+label {
+  display: block;
+  font-size: 12px;
+  color: #555;
+  margin-bottom: 4px;
+  font-weight: 500;
+}
+.req { color: #c0392b; margin-left: 2px; }
+.opt { color: #aaa; font-weight: 400; font-size: 11px; margin-left: 4px; }
+
+input[type=text],
+input[type=email],
+input[type=tel],
+input[type=number],
+textarea,
+select {
+  width: 100%;
+  padding: 7px 9px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  font-size: 13px;
+  font-family: inherit;
+  color: #222;
+  background: #fff;
+  transition: border-color 0.15s;
+}
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: #4a86c0;
+  box-shadow: 0 0 0 2px rgba(74,134,192,0.18);
+}
+input.err, select.err, textarea.err {
+  border-color: #c0392b !important;
+  background: #fff8f8;
+}
+input[readonly] {
+  background: #f6f6f6;
+  color: #888;
+  cursor: default;
+}
+textarea { resize: vertical; }
+
+.row { display: flex; gap: 12px; }
+.row .field { flex: 1; }
+
+/* Lignes */
+.lignes-wrap { overflow-x: auto; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 10px;
+  min-width: 620px;
+}
+thead th {
+  background: #f4f4f4;
+  font-size: 11px;
+  font-weight: 600;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 7px 8px;
+  border-bottom: 2px solid #ddd;
+  text-align: left;
+  white-space: nowrap;
+}
+tbody td {
+  padding: 4px 4px;
+  border-bottom: 1px solid #f0f0f0;
+  vertical-align: middle;
+}
+.col-n  { width: 28px; text-align: center; color: #bbb; font-size: 12px; }
+.col-des { width: 40%; }
+.col-qty { width: 80px; }
+.col-un  { width: 110px; }
+.col-pu  { width: 120px; }
+.col-tva { width: 90px; }
+.col-del { width: 34px; text-align: center; }
+
+tbody tr:last-child td { border-bottom: none; }
+
+.btn-add {
+  background: #f2f2f2;
+  border: 1px solid #c8c8c8;
+  border-radius: 3px;
+  padding: 6px 14px;
+  font-size: 13px;
+  cursor: pointer;
+  color: #444;
+  font-family: inherit;
+}
+.btn-add:hover { background: #e6e6e6; }
+
+.btn-del {
+  background: none;
+  border: none;
+  color: #ccc;
+  font-size: 17px;
+  cursor: pointer;
+  line-height: 1;
+  padding: 2px 5px;
+  font-family: inherit;
+}
+.btn-del:hover { color: #c0392b; }
+
+/* Actions */
+.actions { margin-top: 6px; }
+.btn-gen {
+  width: 100%;
+  background: #2c6fad;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 12px 20px;
+  font-size: 15px;
+  font-family: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 0.01em;
+}
+.btn-gen:hover { background: #245d93; }
+
+/* Notifications */
+.notif {
+  border-radius: 3px;
+  padding: 10px 14px;
+  font-size: 13px;
+  margin-bottom: 16px;
+  display: none;
+}
+.notif.err-box {
+  background: #fdf0ef;
+  border: 1px solid #e8b4b0;
+  color: #922b21;
+}
+.notif.ok-box {
+  background: #eafaf1;
+  border: 1px solid #a9dfbf;
+  color: #1e8449;
+}
+</style>
+</head>
+<body>
+
+<h1>Demande de devis</h1>
+<p class="subtitle">Remplissez le formulaire puis cliquez sur « Générer » — le fichier <strong>demande-initiale.json</strong> sera téléchargé automatiquement.</p>
+
+<div id="box-err" class="notif err-box"></div>
+<div id="box-ok"  class="notif ok-box"></div>
+
+<!-- Identification -->
+<div class="bloc">
+  <h2>Identification</h2>
+  <div class="field">
+    <label for="slug">Identifiant artisan <span class="req">*</span><span class="opt">ex : pellegrini-thermique</span></label>
+    <input type="text" id="slug" placeholder="pellegrini-thermique">
+  </div>
+</div>
+
+<!-- Bloc 1 : Client final -->
+<div class="bloc">
+  <h2>Bloc 1 — Client final</h2>
+  <div class="row">
+    <div class="field">
+      <label for="nom_prenom">Nom et prénom <span class="req">*</span><span class="opt">(particulier)</span></label>
+      <input type="text" id="nom_prenom" placeholder="Marc Vasseur">
+    </div>
+    <div class="field">
+      <label for="raison_sociale">Raison sociale <span class="opt">(professionnel)</span></label>
+      <input type="text" id="raison_sociale" placeholder="">
+    </div>
+  </div>
+  <div class="field">
+    <label for="adresse">Adresse de facturation <span class="req">*</span></label>
+    <input type="text" id="adresse" placeholder="14 rue des Flamants, 13016 Marseille">
+  </div>
+  <div class="field">
+    <label for="adresse_chantier">Adresse du chantier <span class="opt">(si différente de la facturation)</span></label>
+    <input type="text" id="adresse_chantier" placeholder="">
+  </div>
+  <div class="row">
+    <div class="field">
+      <label for="telephone">Téléphone <span class="req">*</span></label>
+      <input type="tel" id="telephone" placeholder="0612345678">
+    </div>
+    <div class="field">
+      <label for="email">Email <span class="req">*</span></label>
+      <input type="email" id="email" placeholder="m.vasseur@example.fr">
+    </div>
+  </div>
+</div>
+
+<!-- Bloc 2 : Template -->
+<div class="bloc">
+  <h2>Bloc 2 — Template</h2>
+  <div class="field">
+    <label for="template_nom">Modèle de devis <span class="opt">(V1 — un seul modèle disponible)</span></label>
+    <input type="text" id="template_nom" value="standard" readonly>
+  </div>
+</div>
+
+<!-- Bloc 3 : Lignes -->
+<div class="bloc">
+  <h2>Bloc 3 — Lignes de prestation <span class="req">*</span></h2>
+  <div class="lignes-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th class="col-n">#</th>
+          <th class="col-des">Désignation</th>
+          <th class="col-qty">Quantité</th>
+          <th class="col-un">Unité</th>
+          <th class="col-pu">Prix unit. HT (€)</th>
+          <th class="col-tva">TVA</th>
+          <th class="col-del"></th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+  <button type="button" class="btn-add" onclick="ajouterLigne()">+ Ajouter une ligne</button>
+</div>
+
+<!-- Bloc 4 : Infos complémentaires -->
+<div class="bloc">
+  <h2>Bloc 4 — Informations complémentaires <span class="opt">(facultatif)</span></h2>
+  <div class="field">
+    <textarea id="infos" rows="4" placeholder="Accès au chantier, contraintes particulières, matériaux spécifiés par le client, garanties à mentionner..."></textarea>
+  </div>
+</div>
+
+<div class="actions">
+  <button class="btn-gen" onclick="generer()">Envoyer ma demande</button>
+</div>
+
+<datalist id="unites-dl">
+  <option value="m²">
+  <option value="ml">
+  <option value="forfait">
+  <option value="heure">
+  <option value="unité">
+  <option value="jour">
+  <option value="m³">
+  <option value="kg">
+</datalist>
+
+<script>
+  var compteur = 0;
+
+  function ajouterLigne() {
+    compteur++;
+    var n = compteur;
+    var tr = document.createElement('tr');
+    tr.id = 'lr-' + n;
+    tr.innerHTML =
+      '<td class="col-n">' + n + '</td>' +
+      '<td class="col-des"><input type="text" id="d-' + n + '" placeholder="Description de la prestation ou fourniture"></td>' +
+      '<td class="col-qty"><input type="number" id="q-' + n + '" min="0" step="any" placeholder="1"></td>' +
+      '<td class="col-un"><input type="text" id="u-' + n + '" list="unites-dl" placeholder="unité"></td>' +
+      '<td class="col-pu"><input type="number" id="p-' + n + '" min="0" step="any" placeholder="0.00"></td>' +
+      '<td class="col-tva">' +
+        '<select id="t-' + n + '">' +
+          '<option value="10" selected>10 %</option>' +
+          '<option value="5.5">5,5 %</option>' +
+          '<option value="20">20 %</option>' +
+        '</select>' +
+      '</td>' +
+      '<td class="col-del"><button class="btn-del" onclick="supprimerLigne(' + n + ')" title="Supprimer cette ligne">×</button></td>';
+    document.getElementById('tbody').appendChild(tr);
+  }
+
+  function supprimerLigne(n) {
+    var tr = document.getElementById('lr-' + n);
+    if (tr) tr.parentNode.removeChild(tr);
+  }
+
+  function v(id) {
+    var el = document.getElementById(id);
+    return el ? el.value.trim() : '';
+  }
+
+  function marquErr(id) {
+    var el = document.getElementById(id);
+    if (el) el.classList.add('err');
+  }
+
+  function resetErr() {
+    var els = document.querySelectorAll('.err');
+    for (var i = 0; i < els.length; i++) els[i].classList.remove('err');
+    document.getElementById('box-err').style.display = 'none';
+    document.getElementById('box-ok').style.display = 'none';
+  }
+
+  function showErr(msg) {
+    var el = document.getElementById('box-err');
+    el.textContent = msg;
+    el.style.display = 'block';
+    document.getElementById('box-ok').style.display = 'none';
+    window.scrollTo(0, 0);
+  }
+
+  function showOk() {
+    var el = document.getElementById('box-ok');
+    el.textContent = 'Fichier demande-initiale.json généré et téléchargé. Déposez-le dans le bon dossier client, puis lancez le Hub.';
+    el.style.display = 'block';
+    document.getElementById('box-err').style.display = 'none';
+    window.scrollTo(0, 0);
+  }
+
+  function generer() {
+    resetErr();
+    var erreurs = [];
+
+    // Identification
+    var slug = v('slug');
+    if (!slug) { erreurs.push('Identifiant artisan manquant.'); marquErr('slug'); }
+
+    // Client final
+    var nomPrenom     = v('nom_prenom');
+    var raisonSociale = v('raison_sociale');
+    if (!nomPrenom && !raisonSociale) {
+      erreurs.push('Nom et prénom ou raison sociale obligatoire.');
+      marquErr('nom_prenom');
+      marquErr('raison_sociale');
+    }
+    var adresse = v('adresse');
+    if (!adresse) { erreurs.push('Adresse de facturation obligatoire.'); marquErr('adresse'); }
+    var telephone = v('telephone');
+    if (!telephone) { erreurs.push('Téléphone obligatoire.'); marquErr('telephone'); }
+    var email = v('email');
+    if (!email) { erreurs.push('Email obligatoire.'); marquErr('email'); }
+
+    // Lignes
+    var rows = document.querySelectorAll('#tbody tr');
+    if (rows.length === 0) {
+      erreurs.push('Au moins une ligne de prestation est obligatoire.');
+    }
+
+    var lignes = [];
+    var ligneErreur = false;
+    for (var i = 0; i < rows.length; i++) {
+      var id = rows[i].id.replace('lr-', '');
+      var des  = document.getElementById('d-' + id) ? document.getElementById('d-' + id).value.trim() : '';
+      var qStr = document.getElementById('q-' + id) ? document.getElementById('q-' + id).value.trim() : '';
+      var uni  = document.getElementById('u-' + id) ? document.getElementById('u-' + id).value.trim() : '';
+      var pStr = document.getElementById('p-' + id) ? document.getElementById('p-' + id).value.trim() : '';
+      var tStr = document.getElementById('t-' + id) ? document.getElementById('t-' + id).value : '10';
+
+      var ok = true;
+      if (!des)                          { marquErr('d-' + id); ligneErreur = true; ok = false; }
+      if (!qStr || isNaN(+qStr))        { marquErr('q-' + id); ligneErreur = true; ok = false; }
+      if (!uni)                          { marquErr('u-' + id); ligneErreur = true; ok = false; }
+      if (!pStr || isNaN(+pStr))        { marquErr('p-' + id); ligneErreur = true; ok = false; }
+
+      if (ok) {
+        lignes.push({
+          designation:     des,
+          quantite:        parseFloat(qStr),
+          unite:           uni,
+          prix_unitaire_ht: parseFloat(parseFloat(pStr).toFixed(2)),
+          tva:             parseFloat(tStr)
+        });
+      }
+    }
+    if (ligneErreur) erreurs.push('Certains champs de ligne sont incomplets (désignation, quantité, unité, prix).');
+
+    if (erreurs.length > 0) {
+      showErr(erreurs.join(' — '));
+      return;
+    }
+
+    // Assemblage JSON
+    var adresseChantier = v('adresse_chantier');
+    var infos = v('infos');
+
+    var data = {
+      slug_artisan:  slug,
+      template_nom:  v('template_nom') || 'standard',
+      client_final: {
+        nom_prenom:      nomPrenom      || null,
+        raison_sociale:  raisonSociale  || null,
+        adresse:         adresse,
+        adresse_chantier: adresseChantier || null,
+        telephone:       telephone,
+        email:           email
+      },
+      lignes: lignes,
+      informations_complementaires: infos || null
+    };
+
+    var json = JSON.stringify(data, null, 2);
+    var sujet  = 'Demande de devis — ' + slug;
+    var mailto = 'mailto:hoffman.jeremy@orange.fr?subject=' + encodeURIComponent(sujet) + '&body=' + encodeURIComponent(json);
+    window.location.href = mailto;
+
+    showOk();
+  }
+
+  // Première ligne au chargement
+  window.onload = function() { ajouterLigne(); };
+</script>
+</body>
+</html>
