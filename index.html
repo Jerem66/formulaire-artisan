@@ -186,6 +186,7 @@ tbody tr:last-child td { border-bottom: none; }
   border: 1px solid #a9dfbf;
   color: #1e8449;
 }
+
 </style>
 </head>
 <body>
@@ -281,16 +282,6 @@ tbody tr:last-child td { border-bottom: none; }
   <button class="btn-gen" onclick="generer()">Envoyer ma demande</button>
 </div>
 
-<datalist id="unites-dl">
-  <option value="m²">
-  <option value="ml">
-  <option value="forfait">
-  <option value="heure">
-  <option value="unité">
-  <option value="jour">
-  <option value="m³">
-  <option value="kg">
-</datalist>
 
 <script>
   var compteur = 0;
@@ -304,7 +295,18 @@ tbody tr:last-child td { border-bottom: none; }
       '<td class="col-n">' + n + '</td>' +
       '<td class="col-des"><input type="text" id="d-' + n + '" placeholder="Description de la prestation ou fourniture"></td>' +
       '<td class="col-qty"><input type="number" id="q-' + n + '" min="0" step="any" placeholder="1"></td>' +
-      '<td class="col-un"><input type="text" id="u-' + n + '" list="unites-dl" placeholder="unité"></td>' +
+      '<td class="col-un">' +
+        '<select id="u-' + n + '">' +
+          '<option value="m²" selected>m²</option>' +
+          '<option value="ml">ml</option>' +
+          '<option value="heure">heure</option>' +
+          '<option value="unité">unité</option>' +
+          '<option value="forfait">forfait</option>' +
+          '<option value="jour">jour</option>' +
+          '<option value="m³">m³</option>' +
+          '<option value="kg">kg</option>' +
+        '</select>' +
+      '</td>' +
       '<td class="col-pu"><input type="number" id="p-' + n + '" min="0" step="any" placeholder="0.00"></td>' +
       '<td class="col-tva">' +
         '<select id="t-' + n + '">' +
