@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Préférences template devis — Atelier Agents IA</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: Segoe UI, Arial, sans-serif;
+  font-size: 14px;
+  color: #222;
+  background: #efefef;
+  padding: 28px 20px 48px;
+}
+
+h1 {
+  font-size: 17px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 6px;
+}
+.subtitle {
+  font-size: 12px;
+  color: #888;
+  margin-bottom: 22px;
+}
+
+.bloc {
+  background: #fff;
+  border: 1px solid #d4d4d4;
+  border-radius: 4px;
+  padding: 18px 20px;
+  margin-bottom: 14px;
+}
+.bloc h2 {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #777;
+  font-weight: 600;
+  margin-bottom: 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #eee;
+}
+
+.field { margin-bottom: 11px; }
+.field:last-child { margin-bottom: 0; }
+
+label {
+  display: block;
+  font-size: 12px;
+  color: #555;
+  margin-bottom: 4px;
+  font-weight: 500;
+}
+.req { color: #c0392b; margin-left: 2px; }
+.opt { color: #aaa; font-weight: 400; font-size: 11px; margin-left: 4px; }
+.note { font-size: 11px; color: #888; margin-top: 3px; font-style: italic; }
+
+input[type=text],
+input[type=email],
+textarea {
+  width: 100%;
+  padding: 7px 9px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  font-size: 13px;
+  font-family: inherit;
+  color: #222;
+  background: #fff;
+  transition: border-color 0.15s;
+}
+input:focus, textarea:focus {
+  outline: none;
+  border-color: #4a86c0;
+  box-shadow: 0 0 0 2px rgba(74,134,192,0.18);
+}
+input.err, textarea.err {
+  border-color: #c0392b !important;
+  background: #fff8f8;
+}
+textarea { resize: vertical; }
+
+/* Radios activité */
+.radios { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 4px; }
+.radio-item { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #333; cursor: pointer; }
+.radio-item input[type=radio] { width: 15px; height: 15px; cursor: pointer; accent-color: #2c6fad; }
+
+/* Checkboxes ressenti */
+.checks { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 4px; }
+.check-item { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #333; cursor: pointer; }
+.check-item input[type=checkbox] { width: 15px; height: 15px; cursor: pointer; accent-color: #2c6fad; }
+
+/* Checkboxes avec description longue (éléments visuels) */
+.checks-desc { display: flex; flex-direction: column; gap: 10px; margin-top: 6px; }
+.check-desc-item { display: flex; align-items: flex-start; gap: 9px; cursor: pointer; }
+.check-desc-item input[type=checkbox] { width: 15px; height: 15px; cursor: pointer; accent-color: #2c6fad; flex-shrink: 0; margin-top: 2px; }
+.check-desc-texte { display: flex; flex-direction: column; gap: 2px; }
+.check-desc-label { font-size: 13px; color: #333; font-weight: 500; line-height: 1.3; }
+.check-desc-info { font-size: 11px; color: #888; font-style: italic; line-height: 1.4; }
+
+/* Color row */
+.color-row { display: flex; gap: 10px; align-items: center; margin-top: 2px; }
+input[type=color] {
+  width: 46px;
+  height: 34px;
+  padding: 2px 3px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.color-row input[type=text] {
+  width: 120px;
+  font-family: monospace;
+  font-size: 13px;
+}
+
+/* Bloc conditionnel devis */
+#bloc_devis_detail { display: none; }
+
+/* Actions */
+.actions { margin-top: 6px; }
+.btn-gen {
+  width: 100%;
+  background: #2c6fad;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 12px 20px;
+  font-size: 15px;
+  font-family: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 0.01em;
+}
+.btn-gen:hover { background: #245d93; }
+
+/* Notifications */
+.notif {
+  border-radius: 3px;
+  padding: 10px 14px;
+  font-size: 13px;
+  margin-bottom: 16px;
+  display: none;
+}
+.notif.err-box {
+  background: #fdf0ef;
+  border: 1px solid #e8b4b0;
+  color: #922b21;
+}
+.notif.ok-box {
+  background: #eafaf1;
+  border: 1px solid #a9dfbf;
+  color: #1e8449;
+}
+</style>
+</head>
+<body>
+
+<h1>Préférences visuelles — template devis</h1>
+<p class="subtitle">Ces informations permettent de créer un modèle de devis à votre image. Remplissez ce que vous savez — tout est facultatif sauf le nom de l'entreprise.</p>
+
+<div id="box-err" class="notif err-box"></div>
+<div id="box-ok"  class="notif ok-box"></div>
+
+<!-- Identification -->
+<div class="bloc">
+  <h2>Identification</h2>
+  <div class="field">
+    <label for="nom_entreprise">Nom de l'entreprise (ou votre nom si vous exercez en nom propre) <span class="req">*</span></label>
+    <input type="text" id="nom_entreprise" placeholder="Martin Plomberie">
+  </div>
+</div>
+
+<!-- Bloc 1 : Activités -->
+<div class="bloc">
+  <h2>Bloc 1 — Vos activités</h2>
+
+  <div class="field">
+    <label>Clientèle principale <span class="req">*</span></label>
+    <div class="radios">
+      <label class="radio-item"><input type="radio" name="clientele" value="Particuliers"> Particuliers</label>
+      <label class="radio-item"><input type="radio" name="clientele" value="Professionnels"> Professionnels</label>
+      <label class="radio-item"><input type="radio" name="clientele" value="Mixte"> Mixte</label>
+    </div>
+  </div>
+
+  <div class="field">
+    <label for="activite_principale">Activité principale <span class="req">*</span></label>
+    <input type="text" id="activite_principale" placeholder="Ex : Plombier chauffagiste, Carreleur, Électricien…">
+  </div>
+
+  <div class="field">
+    <label for="activites_secondaires">Activités secondaires <span class="opt">(facultatif)</span></label>
+    <input type="text" id="activites_secondaires" placeholder="Ces activités apparaîtront en sous-titre sur votre devis — ex : dépannage urgent, rénovation salle de bain">
+  </div>
+</div>
+
+<!-- Bloc 2 : Identité visuelle -->
+<div class="bloc">
+  <h2>Bloc 2 — Identité visuelle</h2>
+
+  <div class="field">
+    <label>Couleur principale <span class="opt">(facultatif — celle de votre logo ou votre préférence)</span></label>
+    <div class="color-row">
+      <input type="color" id="couleur_picker" value="#2c6fad" oninput="syncHex(this.value)">
+      <input type="text"  id="couleur_hex"    value="#2c6fad" placeholder="#2c6fad" maxlength="7" oninput="syncPicker(this.value)">
+    </div>
+    <div class="note">Cliquez sur le carré de couleur ou saisissez un code hexadécimal (#RRGGBB).</div>
+  </div>
+
+  <div class="field">
+    <label>Couleur d'accent <span class="opt">(facultatif — ex : couleur de vos véhicules ou logo secondaire)</span></label>
+    <div class="color-row">
+      <input type="color" id="accent_picker" value="#888888" oninput="syncAccentHex(this.value)">
+      <input type="text"  id="accent_hex"    placeholder="Laissez vide pour calcul automatique" maxlength="7" oninput="syncAccentPicker(this.value)">
+    </div>
+    <div class="note">Si non renseignée, la couleur d'accent sera calculée automatiquement depuis la couleur principale.</div>
+  </div>
+
+  <div class="field">
+    <label>Style voulu <span class="opt">(facultatif)</span></label>
+    <div class="radios">
+      <label class="radio-item"><input type="radio" name="style" value="Sobre et professionnel"> Sobre et professionnel</label>
+      <label class="radio-item"><input type="radio" name="style" value="Moderne et technique"> Moderne et technique</label>
+      <label class="radio-item"><input type="radio" name="style" value="Chaleureux et artisanal"> Chaleureux et artisanal</label>
+    </div>
+  </div>
+
+  <div class="field">
+    <label>Éléments visuels souhaités <span class="opt">(facultatif — plusieurs réponses possibles)</span></label>
+    <div class="checks-desc">
+      <label class="check-desc-item">
+        <input type="checkbox" id="elem_badges">
+        <div class="check-desc-texte">
+          <span class="check-desc-label">Badges qualité</span>
+          <span class="check-desc-info">Vignettes avec icône, titre et description — renforce votre image professionnelle</span>
+        </div>
+      </label>
+      <label class="check-desc-item">
+        <input type="checkbox" id="elem_icones">
+        <div class="check-desc-texte">
+          <span class="check-desc-label">Icônes fonctionnelles</span>
+          <span class="check-desc-info">Pictogrammes sur les zones paiement, coordonnées bancaires, conditions — structure visuellement le document</span>
+        </div>
+      </label>
+      <label class="check-desc-item">
+        <input type="checkbox" id="elem_aucun">
+        <div class="check-desc-texte">
+          <span class="check-desc-label">Aucun élément graphique</span>
+          <span class="check-desc-info">Document épuré, texte uniquement — sobre mais moins différenciant visuellement</span>
+        </div>
+      </label>
+    </div>
+    <div class="note">Les badges et icônes donnent du caractère à votre document et le distinguent d'un devis générique. Un document sans éléments graphiques reste professionnel mais se rapproche d'un modèle standard.</div>
+  </div>
+
+  <div class="field">
+    <label>L'impression que vous voulez donner à vos clients <span class="opt">(facultatif — plusieurs réponses possibles)</span></label>
+    <div class="checks">
+      <label class="check-item"><input type="checkbox" id="res_serieux"> Sérieux</label>
+      <label class="check-item"><input type="checkbox" id="res_confiance"> Confiance</label>
+      <label class="check-item"><input type="checkbox" id="res_proximite"> Proximité</label>
+      <label class="check-item"><input type="checkbox" id="res_expertise"> Expertise</label>
+      <label class="check-item"><input type="checkbox" id="res_solidite"> Solidité</label>
+      <label class="check-item"><input type="checkbox" id="res_originalite"> Originalité</label>
+      <label class="check-item"><input type="checkbox" id="res_dynamisme"> Dynamisme</label>
+    </div>
+  </div>
+
+  <div class="field">
+    <label for="logo_desc">Description de votre logo <span class="opt">(facultatif)</span></label>
+    <input type="text" id="logo_desc" placeholder="Ex : initiales MP dans un cercle vert, fond bleu marine">
+  </div>
+</div>
+
+<!-- Bloc 3 : Documents existants -->
+<div class="bloc">
+  <h2>Bloc 3 — Vos documents actuels</h2>
+
+  <div class="field">
+    <label>Avez-vous déjà des devis à votre nom ?</label>
+    <div class="radios">
+      <label class="radio-item"><input type="radio" name="devis_existants" value="oui" onchange="toggleDevis('oui')"> Oui</label>
+      <label class="radio-item"><input type="radio" name="devis_existants" value="non" onchange="toggleDevis('non')" checked> Non</label>
+    </div>
+  </div>
+
+  <div id="bloc_devis_detail">
+    <div class="field">
+      <label for="aime">Ce que vous aimez dans leur présentation <span class="opt">(facultatif)</span></label>
+      <textarea id="aime" rows="2" placeholder="Ex : la clarté des totaux, les couleurs, la mise en page…"></textarea>
+    </div>
+    <div class="field">
+      <label for="ameliorer">Ce que vous voudriez améliorer <span class="opt">(facultatif)</span></label>
+      <textarea id="ameliorer" rows="2" placeholder="Ex : trop basique, manque de logo, police illisible…"></textarea>
+    </div>
+  </div>
+</div>
+
+<div class="actions">
+  <button class="btn-gen" onclick="envoyer()">Envoyer mes préférences</button>
+</div>
+
+<script>
+function syncHex(val) {
+  document.getElementById('couleur_hex').value = val;
+}
+function syncPicker(val) {
+  if (/^#[0-9A-Fa-f]{6}$/.test(val)) {
+    document.getElementById('couleur_picker').value = val;
+  }
+}
+
+function syncAccentHex(val) {
+  document.getElementById('accent_hex').value = val;
+}
+function syncAccentPicker(val) {
+  if (/^#[0-9A-Fa-f]{6}$/.test(val)) {
+    document.getElementById('accent_picker').value = val;
+  }
+}
+
+function toggleDevis(val) {
+  document.getElementById('bloc_devis_detail').style.display = val === 'oui' ? 'block' : 'none';
+}
+
+function v(id) {
+  var el = document.getElementById(id);
+  return el ? el.value.trim() : '';
+}
+
+function marquErr(id) {
+  var el = document.getElementById(id);
+  if (el) el.classList.add('err');
+}
+
+function resetErr() {
+  var els = document.querySelectorAll('.err');
+  for (var i = 0; i < els.length; i++) els[i].classList.remove('err');
+  document.getElementById('box-err').style.display = 'none';
+  document.getElementById('box-ok').style.display = 'none';
+}
+
+function showErr(msg) {
+  var el = document.getElementById('box-err');
+  el.textContent = msg;
+  el.style.display = 'block';
+  document.getElementById('box-ok').style.display = 'none';
+  window.scrollTo(0, 0);
+}
+
+function showOk() {
+  var el = document.getElementById('box-ok');
+  el.textContent = 'Vos préférences ont été envoyées. Votre application mail s\'est ouverte avec le brief pré-rempli.';
+  el.style.display = 'block';
+  document.getElementById('box-err').style.display = 'none';
+  window.scrollTo(0, 0);
+}
+
+function envoyer() {
+  resetErr();
+  var erreurs = [];
+
+  var nom = v('nom_entreprise');
+  if (!nom) { erreurs.push('Nom de l\'entreprise manquant.'); marquErr('nom_entreprise'); }
+
+  var clienteleEl = document.querySelector('input[name="clientele"]:checked');
+  if (!clienteleEl) { erreurs.push('Clientèle principale manquante.'); }
+
+  var activite = v('activite_principale');
+  if (!activite) { erreurs.push('Activité principale manquante.'); marquErr('activite_principale'); }
+
+  if (erreurs.length > 0) {
+    showErr(erreurs.join(' — '));
+    return;
+  }
+
+  var clientele    = clienteleEl ? clienteleEl.value : '';
+  var activitesSec = v('activites_secondaires');
+  var couleur      = v('couleur_hex') || document.getElementById('couleur_picker').value;
+  var accentHex  = v('accent_hex');
+  var couleurAccent = /^#[0-9A-Fa-f]{6}$/.test(accentHex) ? accentHex : 'calculée automatiquement';
+  var styleEl    = document.querySelector('input[name="style"]:checked');
+  var style      = styleEl ? styleEl.value : '';
+  var logoDesc   = v('logo_desc');
+  var devisEl    = document.querySelector('input[name="devis_existants"]:checked');
+  var devisExist = devisEl ? devisEl.value : 'non';
+  var aime       = devisExist === 'oui' ? v('aime')      : '';
+  var ameliorer  = devisExist === 'oui' ? v('ameliorer') : '';
+
+  // Éléments visuels
+  var elemsVisuels = [];
+  if (document.getElementById('elem_badges').checked)  elemsVisuels.push('Badges qualité');
+  if (document.getElementById('elem_icones').checked)  elemsVisuels.push('Icônes fonctionnelles');
+  if (document.getElementById('elem_aucun').checked)   elemsVisuels.push('Aucun élément graphique');
+
+  // Ressenti
+  var ressenti = [];
+  if (document.getElementById('res_serieux').checked)     ressenti.push('Sérieux');
+  if (document.getElementById('res_confiance').checked)   ressenti.push('Confiance');
+  if (document.getElementById('res_proximite').checked)   ressenti.push('Proximité');
+  if (document.getElementById('res_expertise').checked)   ressenti.push('Expertise');
+  if (document.getElementById('res_solidite').checked)    ressenti.push('Solidité');
+  if (document.getElementById('res_originalite').checked) ressenti.push('Originalité');
+  if (document.getElementById('res_dynamisme').checked)   ressenti.push('Dynamisme');
+
+  // ── PARTIE 1 — Données artisan ──────────────────────────────────────────
+  var partie1 = [
+    '========================================',
+    'DEMANDE DE TEMPLATE DEVIS',
+    '========================================',
+    '',
+    'PARTIE 1 — DONNÉES ARTISAN',
+    '-----------------------------',
+    'Nom de l\'entreprise     : ' + nom,
+    'Clientèle principale    : ' + clientele,
+    'Activité principale     : ' + activite,
+    'Activités secondaires   : ' + (activitesSec || '—'),
+    'Couleur principale      : ' + couleur,
+    'Couleur d\'accent        : ' + couleurAccent,
+    'Style voulu             : ' + (style || '—'),
+    'Éléments visuels        : ' + (elemsVisuels.length > 0 ? elemsVisuels.join(', ') : 'non renseigné'),
+    'Impression souhaitée    : ' + (ressenti.length > 0 ? ressenti.join(', ') : '—'),
+    'Description du logo     : ' + (logoDesc || '—'),
+    'Devis existants         : ' + (devisExist === 'oui' ? 'Oui' : 'Non'),
+  ];
+  if (devisExist === 'oui') {
+    partie1.push('Ce qu\'il aime           : ' + (aime      || '—'));
+    partie1.push('Ce qu\'il veut améliorer : ' + (ameliorer || '—'));
+  }
+  partie1.push('');
+
+  // ── PARTIE 2 — Instructions techniques fixes ─────────────────────────────
+  var partie2 = [
+    '========================================',
+    'PARTIE 2 — INSTRUCTIONS TECHNIQUES FIXES',
+    '========================================',
+    '',
+    'Tu dois produire un template de devis pour un artisan du BTP.',
+    '',
+    'Fichiers à créer dans squelettes-reference/devis/<slug-artisan>-v1/ :',
+    '  - template.html : gabarit Jinja2 pur, zéro donnée réelle codée en dur',
+    '  - styles.css    : feuille de style, polices Lato via @font-face (fonts/ local)',
+    '  - meta.json     : conditions commerciales, schéma exact ci-dessous',
+    '  - preview.html  : même structure HTML mais données fictives codées en dur,',
+    '                    CSS embarqué ou lien vers styles.css, ouvre sans serveur',
+    '',
+    'Schéma meta.json :',
+    '  {',
+    '    "version_format": "1",',
+    '    "conditions_reglement": "...",',
+    '    "mode_reglement": "...",',
+    '    "duree_validite": 30,',
+    '    "acompte_habituel": 30,',
+    '    "delai_execution": "...",',
+    '    "mentions_legales": "...",',
+    '    "logo": null',
+    '  }',
+    '',
+    'Contrat de variables Jinja2 obligatoires (ne pas en inventer d\'autres) :',
+    '',
+    '  Artisan (snapshot client.json) :',
+    '    {{ artisan.identite.raison_sociale }}',
+    '    {{ artisan.identite.adresse }}',
+    '    {{ artisan.identite.telephone }}',
+    '    {{ artisan.identite.email }}',
+    '    {{ artisan.identite.siret }}',
+    '    {% if artisan.identite.logo|default(\'\') %} ... {% endif %}',
+    '',
+    '  Devis :',
+    '    {{ devis.numero_devis }}',
+    '    {{ devis.date_devis | format_date }}',
+    '',
+    '  Client final :',
+    '    {{ devis.client_final.nom_prenom }}',
+    '    {{ devis.client_final.raison_sociale }}',
+    '    {{ devis.client_final.adresse }}',
+    '    {{ devis.client_final.adresse_chantier }}',
+    '    {{ devis.client_final.telephone }}',
+    '    {{ devis.client_final.email }}',
+    '',
+    '  Lignes ({% for ligne in devis.lignes %}) :',
+    '    {{ ligne.designation }}',
+    '    {{ ligne.quantite | format_decimal }}',
+    '    {{ ligne.unite }}',
+    '    {{ ligne.prix_unitaire_ht | format_montant }}',
+    '    {{ ligne.tva | format_decimal }}',
+    '    {{ ligne.montant_ht | format_montant }}',
+    '',
+    '  Totaux :',
+    '    {{ devis.totaux.ht | format_montant }}',
+    '    {{ devis.totaux.tva | format_montant }}',
+    '    {{ devis.totaux.ttc | format_montant }}',
+    '    Ventilation ({% for v in devis.totaux.ventilation_tva %}) :',
+    '      {{ v.taux | format_decimal }}',
+    '      {{ v.base_ht | format_montant }}',
+    '      {{ v.montant_tva | format_montant }}',
+    '',
+    '  Meta (depuis meta.json) :',
+    '    {{ meta.conditions_reglement }}',
+    '    {{ meta.duree_validite }}',
+    '    {{ meta.acompte_habituel }}',
+    '    {{ meta.delai_execution }}',
+    '    {{ meta.mentions_legales }}',
+    '',
+    'Filtres Jinja2 disponibles (déjà enregistrés dans rendu.py) :',
+    '  | format_date    : "2026-06-14" → "14 juin 2026"',
+    '  | format_montant : 1234.5 → "1 234,50"',
+    '  | format_decimal : 22.0 → "22",  1.5 → "1,5"',
+    '',
+    'Rendu PDF : Playwright/Chromium.',
+    '  @page { size: A4 portrait; margin: 15mm; }',
+    '  print_background: True — les fonds colorés sont rendus.',
+    '  Flexbox, border-radius, box-shadow, SVG inline : tous supportés.',
+    '',
+    'Règle de sécurité : ne jamais écrire dans E:\\Donnees-Clients.',
+    'Jérémy valide le preview.html dans Chrome avant toute mise en production.',
+    '',
+    'Style des icônes SVG selon "Style voulu" :',
+    '  Sobre et professionnel  → stroke-width 1.2, contour sans remplissage, angles géométriques',
+    '  Moderne et technique    → stroke-width 1.8, mélange plein/contour, angles droits',
+    '  Chaleureux et artisanal → stroke-linecap round, stroke-linejoin round, formes douces',
+    '',
+    'Éléments visuels à inclure selon les cases cochées :',
+    '  Badges qualité cochés          → inclure la section badges (3 ou 4 selon les signaux ressenti)',
+    '  Icônes fonctionnelles cochées  → icônes SVG sur zones paiement, bancaire, conditions',
+    '  Aucun élément graphique coché  → supprimer badges et icônes, document texte pur',
+    '  Si aucune case cochée          → comportement par défaut : badges + icônes fonctionnelles',
+  ];
+
+  var corps = partie1.concat(partie2).join('\n');
+  var sujet  = 'Préférences template — ' + nom;
+  var mailto = 'mailto:hoffman.jeremy@orange.fr'
+    + '?subject=' + encodeURIComponent(sujet)
+    + '&body='    + encodeURIComponent(corps);
+  window.location.href = mailto;
+  showOk();
+}
+</script>
+</body>
+</html>

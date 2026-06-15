@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Inscription artisan — Atelier Agents IA</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: Segoe UI, Arial, sans-serif;
+  font-size: 14px;
+  color: #222;
+  background: #efefef;
+  padding: 28px 20px 48px;
+}
+
+h1 {
+  font-size: 17px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 6px;
+}
+.subtitle {
+  font-size: 12px;
+  color: #888;
+  margin-bottom: 22px;
+}
+
+.bloc {
+  background: #fff;
+  border: 1px solid #d4d4d4;
+  border-radius: 4px;
+  padding: 18px 20px;
+  margin-bottom: 14px;
+}
+.bloc h2 {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #777;
+  font-weight: 600;
+  margin-bottom: 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #eee;
+}
+
+.field { margin-bottom: 11px; }
+.field:last-child { margin-bottom: 0; }
+
+label {
+  display: block;
+  font-size: 12px;
+  color: #555;
+  margin-bottom: 4px;
+  font-weight: 500;
+}
+.req { color: #c0392b; margin-left: 2px; }
+.opt { color: #aaa; font-weight: 400; font-size: 11px; margin-left: 4px; }
+.note { font-size: 11px; color: #888; margin-top: 3px; font-style: italic; }
+
+input[type=text],
+input[type=email],
+input[type=tel] {
+  width: 100%;
+  padding: 7px 9px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  font-size: 13px;
+  font-family: inherit;
+  color: #222;
+  background: #fff;
+  transition: border-color 0.15s;
+}
+input:focus {
+  outline: none;
+  border-color: #4a86c0;
+  box-shadow: 0 0 0 2px rgba(74,134,192,0.18);
+}
+input.err {
+  border-color: #c0392b !important;
+  background: #fff8f8;
+}
+
+.row { display: flex; gap: 12px; }
+.row .field { flex: 1; }
+
+/* Radios secteur */
+.radios { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 4px; }
+.radio-item { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #333; cursor: pointer; }
+.radio-item input[type=radio] { width: 15px; height: 15px; cursor: pointer; accent-color: #2c6fad; }
+
+/* Checkboxes qualifications */
+.checks { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 4px; }
+.check-item { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #333; cursor: pointer; }
+.check-item input[type=checkbox] { width: 15px; height: 15px; cursor: pointer; accent-color: #2c6fad; }
+#qual_autre_texte { margin-top: 8px; display: none; }
+
+/* Actions */
+.actions { margin-top: 6px; }
+.btn-gen {
+  width: 100%;
+  background: #2c6fad;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 12px 20px;
+  font-size: 15px;
+  font-family: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 0.01em;
+}
+.btn-gen:hover { background: #245d93; }
+
+/* Notifications */
+.notif {
+  border-radius: 3px;
+  padding: 10px 14px;
+  font-size: 13px;
+  margin-bottom: 16px;
+  display: none;
+}
+.notif.err-box {
+  background: #fdf0ef;
+  border: 1px solid #e8b4b0;
+  color: #922b21;
+}
+.notif.ok-box {
+  background: #eafaf1;
+  border: 1px solid #a9dfbf;
+  color: #1e8449;
+}
+</style>
+</head>
+<body>
+
+<h1>Inscription artisan</h1>
+<p class="subtitle">À remplir une seule fois à la signature du contrat. Votre inscription sera transmise par mail.</p>
+
+<div id="box-err" class="notif err-box"></div>
+<div id="box-ok"  class="notif ok-box"></div>
+
+<!-- Bloc 1 : Identité -->
+<div class="bloc">
+  <h2>Bloc 1 — Identité</h2>
+
+  <div class="field">
+    <label for="nom_entreprise">Nom de l'entreprise (ou votre nom si vous exercez en nom propre) <span class="req">*</span></label>
+    <input type="text" id="nom_entreprise" placeholder="Martin Plomberie">
+  </div>
+
+  <div class="field">
+    <label for="nom_dirigeant">Nom du dirigeant <span class="req">*</span></label>
+    <input type="text" id="nom_dirigeant" placeholder="Jean-Pierre Martin">
+  </div>
+
+  <div class="field">
+    <label for="adresse">Adresse complète <span class="req">*</span></label>
+    <input type="text" id="adresse" placeholder="15 rue des Lilas, 69008 Lyon">
+  </div>
+
+  <div class="row">
+    <div class="field">
+      <label for="telephone">Téléphone <span class="req">*</span></label>
+      <input type="tel" id="telephone" placeholder="04 78 76 52 31">
+    </div>
+    <div class="field">
+      <label for="email">Email <span class="req">*</span></label>
+      <input type="email" id="email" placeholder="contact@martin-plomberie.fr">
+    </div>
+  </div>
+
+  <div class="field">
+    <label for="site_web">Site web <span class="opt">(facultatif)</span></label>
+    <input type="text" id="site_web" placeholder="www.martin-plomberie.fr">
+  </div>
+
+  <div class="field">
+    <label>Votre secteur d'intervention principal <span class="req">*</span></label>
+    <div class="radios">
+      <label class="radio-item"><input type="radio" name="secteur" value="Privé"> Privé</label>
+      <label class="radio-item"><input type="radio" name="secteur" value="Public"> Public</label>
+      <label class="radio-item"><input type="radio" name="secteur" value="Administratif"> Administratif</label>
+    </div>
+  </div>
+</div>
+
+<!-- Bloc 2 : Données légales -->
+<div class="bloc">
+  <h2>Bloc 2 — Données légales</h2>
+
+  <div class="field">
+    <label for="siret">Numéro SIRET <span class="req">*</span><span class="opt">14 chiffres sans espaces</span></label>
+    <input type="text" id="siret" placeholder="51247896300018" maxlength="18">
+  </div>
+
+  <div class="field">
+    <label for="numero_tva">Numéro TVA intracommunautaire <span class="opt">(facultatif)</span></label>
+    <input type="text" id="numero_tva" placeholder="FR 12 512478963">
+    <div class="note">Uniquement si vous êtes soumis à la TVA.</div>
+  </div>
+
+  <div class="field">
+    <label>Assurance décennale <span class="opt">(facultatif)</span></label>
+    <div class="row">
+      <div class="field">
+        <label for="assureur" style="font-weight:400; font-size:11px; color:#888;">Nom de l'assureur</label>
+        <input type="text" id="assureur" placeholder="AXA, Allianz, MAF…">
+      </div>
+      <div class="field">
+        <label for="num_police" style="font-weight:400; font-size:11px; color:#888;">Numéro de police</label>
+        <input type="text" id="num_police" placeholder="AXA-2024-0012345">
+      </div>
+    </div>
+  </div>
+
+  <div class="field">
+    <label>Qualifications <span class="opt">(facultatif — cochez ce qui vous concerne)</span></label>
+    <div class="checks">
+      <label class="check-item"><input type="checkbox" id="qual_rge"> RGE</label>
+      <label class="check-item"><input type="checkbox" id="qual_qualibat"> Qualibat</label>
+      <label class="check-item"><input type="checkbox" id="qual_qualifelec"> Qualifelec</label>
+      <label class="check-item"><input type="checkbox" id="qual_autre" onchange="toggleAutre(this)"> Autre</label>
+    </div>
+    <div id="qual_autre_texte">
+      <input type="text" id="qual_autre_detail" placeholder="Précisez votre qualification">
+    </div>
+  </div>
+</div>
+
+<div class="actions">
+  <button class="btn-gen" onclick="envoyer()">Envoyer mon inscription</button>
+</div>
+
+<script>
+function toggleAutre(cb) {
+  document.getElementById('qual_autre_texte').style.display = cb.checked ? 'block' : 'none';
+}
+
+function v(id) {
+  var el = document.getElementById(id);
+  return el ? el.value.trim() : '';
+}
+
+function marquErr(id) {
+  var el = document.getElementById(id);
+  if (el) el.classList.add('err');
+}
+
+function resetErr() {
+  var els = document.querySelectorAll('.err');
+  for (var i = 0; i < els.length; i++) els[i].classList.remove('err');
+  document.getElementById('box-err').style.display = 'none';
+  document.getElementById('box-ok').style.display = 'none';
+}
+
+function showErr(msg) {
+  var el = document.getElementById('box-err');
+  el.textContent = msg;
+  el.style.display = 'block';
+  document.getElementById('box-ok').style.display = 'none';
+  window.scrollTo(0, 0);
+}
+
+function showOk() {
+  var el = document.getElementById('box-ok');
+  el.textContent = 'Inscription envoyée. Votre application mail s\'est ouverte avec les données pré-remplies.';
+  el.style.display = 'block';
+  document.getElementById('box-err').style.display = 'none';
+  window.scrollTo(0, 0);
+}
+
+function envoyer() {
+  resetErr();
+  var erreurs = [];
+
+  var nom = v('nom_entreprise');
+  if (!nom)  { erreurs.push('Nom de l\'entreprise manquant.'); marquErr('nom_entreprise'); }
+
+  var dirigeant = v('nom_dirigeant');
+  if (!dirigeant) { erreurs.push('Nom du dirigeant manquant.'); marquErr('nom_dirigeant'); }
+
+  var adresse = v('adresse');
+  if (!adresse) { erreurs.push('Adresse manquante.'); marquErr('adresse'); }
+
+  var telephone = v('telephone');
+  if (!telephone) { erreurs.push('Téléphone manquant.'); marquErr('telephone'); }
+
+  var email = v('email');
+  if (!email) { erreurs.push('Email manquant.'); marquErr('email'); }
+
+  var siret = v('siret').replace(/\s/g, '');
+  if (!siret) {
+    erreurs.push('SIRET manquant.'); marquErr('siret');
+  } else if (!/^\d{14}$/.test(siret)) {
+    erreurs.push('SIRET invalide (14 chiffres attendus).'); marquErr('siret');
+  }
+
+  var secteurEl = document.querySelector('input[name="secteur"]:checked');
+  if (!secteurEl) { erreurs.push('Secteur d\'intervention manquant.'); }
+
+  if (erreurs.length > 0) {
+    showErr(erreurs.join(' — '));
+    return;
+  }
+
+  // Qualifications
+  var quals = [];
+  if (document.getElementById('qual_rge').checked)       quals.push('RGE');
+  if (document.getElementById('qual_qualibat').checked)  quals.push('Qualibat');
+  if (document.getElementById('qual_qualifelec').checked) quals.push('Qualifelec');
+  var autreDetail = null;
+  if (document.getElementById('qual_autre').checked) {
+    quals.push('Autre');
+    autreDetail = v('qual_autre_detail') || null;
+  }
+
+  var data = {
+    type: 'inscription_artisan',
+    identite: {
+      nom_entreprise:       nom,
+      nom_dirigeant:        dirigeant,
+      adresse:              adresse,
+      telephone:            telephone,
+      email:                email,
+      site_web:             v('site_web') || null,
+      secteur_intervention: secteurEl ? secteurEl.value : null
+    },
+    legal: {
+      siret:           siret,
+      numero_tva:      v('numero_tva') || null,
+      assurance_decennale: {
+        assureur:      v('assureur')   || null,
+        numero_police: v('num_police') || null
+      }
+    },
+    qualifications:            quals.length > 0 ? quals : [],
+    qualification_autre_detail: autreDetail
+  };
+
+  var json = JSON.stringify(data, null, 2);
+  var sujet  = 'Inscription artisan — ' + nom;
+  var mailto = 'mailto:hoffman.jeremy@orange.fr'
+    + '?subject=' + encodeURIComponent(sujet)
+    + '&body='    + encodeURIComponent(json);
+  window.location.href = mailto;
+  showOk();
+}
+</script>
+</body>
+</html>
