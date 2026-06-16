@@ -383,7 +383,14 @@ function envoyer() {
   var activitesSec = v('activites_secondaires');
   var couleur      = v('couleur_hex') || document.getElementById('couleur_picker').value;
   var accentHex  = v('accent_hex');
-  var couleurAccent = /^#[0-9A-Fa-f]{6}$/.test(accentHex) ? accentHex : 'calculée automatiquement';
+  var couleurAccent = (function() {
+    if (/^#[0-9A-Fa-f]{6}$/.test(accentHex)) return accentHex;
+    var hex = couleur.replace('#','');
+    var r = Math.max(0, parseInt(hex.slice(0,2),16) - 40);
+    var g = Math.max(0, parseInt(hex.slice(2,4),16) - 40);
+    var b = Math.max(0, parseInt(hex.slice(4,6),16) - 40);
+    return '#' + [r,g,b].map(function(x){return x.toString(16).padStart(2,'0');}).join('');
+  })();
   var styleEl    = document.querySelector('input[name="style"]:checked');
   var style      = styleEl ? styleEl.value : '';
   var logoDesc   = v('logo_desc');
@@ -526,10 +533,10 @@ function envoyer() {
     '  Chaleureux et artisanal → stroke-linecap round, stroke-linejoin round, formes douces',
     '',
     'Éléments visuels à inclure selon les cases cochées :',
-    '  Badges qualité cochés          → inclure la section badges (3 ou 4 selon les signaux ressenti)',
+    '  Badges qualité cochés          → inclure exactement 3 badges, contenu dérivé de l\'activité principale fournie en PARTIE 1',
     '  Icônes fonctionnelles cochées  → icônes SVG sur zones paiement, bancaire, conditions',
     '  Aucun élément graphique coché  → supprimer badges et icônes, document texte pur',
-    '  Si aucune case cochée          → comportement par défaut : badges + icônes fonctionnelles',
+    '  Si aucune case cochée          → document texte pur, aucun élément graphique',
   ];
 
   var corps = partie1.concat(partie2).join('\n');
