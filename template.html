@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Préférences template devis — Atelier Agents IA</title>
+<title>Préférences template devis et facture — Atelier Agents IA</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -83,23 +83,14 @@ input.err, textarea.err {
 }
 textarea { resize: vertical; }
 
-/* Radios activité */
+/* Radios */
 .radios { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 4px; }
 .radio-item { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #333; cursor: pointer; }
 .radio-item input[type=radio] { width: 15px; height: 15px; cursor: pointer; accent-color: #2c6fad; }
 
-/* Checkboxes ressenti */
-.checks { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 4px; }
-.check-item { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #333; cursor: pointer; }
+/* Checkbox seule */
+.check-item { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #333; cursor: pointer; font-weight: 400; }
 .check-item input[type=checkbox] { width: 15px; height: 15px; cursor: pointer; accent-color: #2c6fad; }
-
-/* Checkboxes avec description longue (éléments visuels) */
-.checks-desc { display: flex; flex-direction: column; gap: 10px; margin-top: 6px; }
-.check-desc-item { display: flex; align-items: flex-start; gap: 9px; cursor: pointer; }
-.check-desc-item input[type=checkbox] { width: 15px; height: 15px; cursor: pointer; accent-color: #2c6fad; flex-shrink: 0; margin-top: 2px; }
-.check-desc-texte { display: flex; flex-direction: column; gap: 2px; }
-.check-desc-label { font-size: 13px; color: #333; font-weight: 500; line-height: 1.3; }
-.check-desc-info { font-size: 11px; color: #888; font-style: italic; line-height: 1.4; }
 
 /* Color row */
 .color-row { display: flex; gap: 10px; align-items: center; margin-top: 2px; }
@@ -118,7 +109,7 @@ input[type=color] {
   font-size: 13px;
 }
 
-/* Bloc conditionnel devis */
+/* Blocs conditionnels */
 #bloc_devis_detail { display: none; }
 
 /* Actions */
@@ -195,7 +186,7 @@ input[type=color] {
 
   <div class="field">
     <label for="activites_secondaires">Activités secondaires <span class="opt">(facultatif)</span></label>
-    <input type="text" id="activites_secondaires" placeholder="Ces activités apparaîtront en sous-titre sur votre devis — ex : dépannage urgent, rénovation salle de bain">
+    <input type="text" id="activites_secondaires" placeholder="Apparaîtront en sous-titre sur votre devis et facture — ex : dépannage urgent, rénovation salle de bain">
   </div>
 </div>
 
@@ -224,57 +215,28 @@ input[type=color] {
   <div class="field">
     <label>Style voulu <span class="opt">(facultatif)</span></label>
     <div class="note">Ce choix s'applique à la fois au devis et à la facture — un seul style pour les deux documents.</div>
-    <div class="radios">
-      <label class="radio-item"><input type="radio" name="style" value="Sobre et professionnel"> Sobre et professionnel</label>
-      <label class="radio-item"><input type="radio" name="style" value="Moderne et technique"> Moderne et technique</label>
-      <label class="radio-item"><input type="radio" name="style" value="Chaleureux et artisanal"> Chaleureux et artisanal</label>
+    <div class="radios" style="margin-top: 6px;">
+      <label class="radio-item"><input type="radio" name="style" value="sobre"> Sobre et professionnel</label>
+      <label class="radio-item"><input type="radio" name="style" value="moderne"> Moderne et technique</label>
+      <label class="radio-item"><input type="radio" name="style" value="chaleureux"> Chaleureux et artisanal</label>
     </div>
   </div>
 
   <div class="field">
-    <label>Éléments visuels souhaités <span class="opt">(facultatif — plusieurs réponses possibles)</span></label>
-    <div class="checks-desc">
-      <label class="check-desc-item">
-        <input type="checkbox" id="elem_badges">
-        <div class="check-desc-texte">
-          <span class="check-desc-label">Badges qualité</span>
-          <span class="check-desc-info">Vignettes avec icône, titre et description — renforce votre image professionnelle</span>
-        </div>
-      </label>
-      <label class="check-desc-item">
-        <input type="checkbox" id="elem_icones">
-        <div class="check-desc-texte">
-          <span class="check-desc-label">Icônes fonctionnelles</span>
-          <span class="check-desc-info">Pictogrammes sur les zones paiement, coordonnées bancaires, conditions — structure visuellement le document</span>
-        </div>
-      </label>
-      <label class="check-desc-item">
-        <input type="checkbox" id="elem_aucun">
-        <div class="check-desc-texte">
-          <span class="check-desc-label">Aucun élément graphique</span>
-          <span class="check-desc-info">Document épuré, texte uniquement — sobre mais moins différenciant visuellement</span>
-        </div>
-      </label>
-    </div>
-    <div class="note">Les badges et icônes donnent du caractère à votre document et le distinguent d'un devis générique. Un document sans éléments graphiques reste professionnel mais se rapproche d'un modèle standard.</div>
+    <label for="mentions_confiance">Mentions de confiance à afficher <span class="opt">(facultatif — 3 à 5 lignes)</span></label>
+    <div class="note">Listez les mentions exactes, une par ligne, que vous souhaitez voir apparaître sur vos devis et factures. Exemples : "Certifié RGE", "Garantie décennale", "Artisan local depuis 2015", "Devis gratuit sous 48h".</div>
+    <textarea id="mentions_confiance" rows="4" placeholder="Certifié RGE&#10;Garantie décennale&#10;Artisan local depuis 2015&#10;Devis gratuit sous 48h" style="margin-top: 6px;"></textarea>
   </div>
 
   <div class="field">
-    <label>L'impression que vous voulez donner à vos clients <span class="opt">(facultatif — plusieurs réponses possibles)</span></label>
-    <div class="checks">
-      <label class="check-item"><input type="checkbox" id="res_serieux"> Sérieux</label>
-      <label class="check-item"><input type="checkbox" id="res_confiance"> Confiance</label>
-      <label class="check-item"><input type="checkbox" id="res_proximite"> Proximité</label>
-      <label class="check-item"><input type="checkbox" id="res_expertise"> Expertise</label>
-      <label class="check-item"><input type="checkbox" id="res_solidite"> Solidité</label>
-      <label class="check-item"><input type="checkbox" id="res_originalite"> Originalité</label>
-      <label class="check-item"><input type="checkbox" id="res_dynamisme"> Dynamisme</label>
+    <label>Votre logo <span class="opt">(facultatif)</span></label>
+    <div class="note">Si vous avez déjà un logo et souhaitez le conserver, joignez son fichier (image) à ce mail — le template ne pourra pas être finalisé sans ce fichier. Si vous n'en avez pas ou préférez en créer un nouveau, décrivez ci-dessous celui que vous souhaitez, avec autant de détails que possible (objet, style, couleurs, ambiance).</div>
+    <div id="bloc_logo_desc">
+      <input type="text" id="logo_desc" placeholder="Ex : une truelle de maçon épurée, fond blanc, traits fins noirs…" style="margin-top: 6px;">
     </div>
-  </div>
-
-  <div class="field">
-    <label for="logo_desc">Description de votre logo <span class="opt">(facultatif)</span></label>
-    <input type="text" id="logo_desc" placeholder="Ex : initiales MP dans un cercle vert, fond bleu marine">
+    <label class="check-item" style="margin-top: 8px;">
+      <input type="checkbox" id="sans_logo" onchange="toggleLogo(this.checked)"> Je ne souhaite pas de logo
+    </label>
   </div>
 </div>
 
@@ -327,6 +289,10 @@ function syncAccentPicker(val) {
 
 function toggleDevis(val) {
   document.getElementById('bloc_devis_detail').style.display = val === 'oui' ? 'block' : 'none';
+}
+
+function toggleLogo(noLogo) {
+  document.getElementById('bloc_logo_desc').style.display = noLogo ? 'none' : 'block';
 }
 
 function v(id) {
@@ -383,7 +349,7 @@ function envoyer() {
   var clientele    = clienteleEl ? clienteleEl.value : '';
   var activitesSec = v('activites_secondaires');
   var couleur      = v('couleur_hex') || document.getElementById('couleur_picker').value;
-  var accentHex  = v('accent_hex');
+  var accentHex    = v('accent_hex');
   var couleurAccent = (function() {
     if (/^#[0-9A-Fa-f]{6}$/.test(accentHex)) return accentHex;
     var hex = couleur.replace('#','');
@@ -392,34 +358,23 @@ function envoyer() {
     var b = Math.max(0, parseInt(hex.slice(4,6),16) - 40);
     return '#' + [r,g,b].map(function(x){return x.toString(16).padStart(2,'0');}).join('');
   })();
-  var styleEl    = document.querySelector('input[name="style"]:checked');
-  var style      = styleEl ? styleEl.value : '';
-  var logoDesc   = v('logo_desc');
+  var styleEl  = document.querySelector('input[name="style"]:checked');
+  var style    = styleEl ? styleEl.value : '';
+  var mentionsRaw = v('mentions_confiance');
+  var mentionsBadges = mentionsRaw.length > 0
+    ? mentionsRaw.split('\n').map(function(l) { return l.trim(); }).filter(function(l) { return l.length > 0; })
+    : [];
+  var sansLogo = document.getElementById('sans_logo').checked;
+  var logoDesc = sansLogo ? '' : v('logo_desc');
   var devisEl    = document.querySelector('input[name="devis_existants"]:checked');
   var devisExist = devisEl ? devisEl.value : 'non';
   var aime       = devisExist === 'oui' ? v('aime')      : '';
   var ameliorer  = devisExist === 'oui' ? v('ameliorer') : '';
 
-  // Éléments visuels
-  var elemsVisuels = [];
-  if (document.getElementById('elem_badges').checked)  elemsVisuels.push('Badges qualité');
-  if (document.getElementById('elem_icones').checked)  elemsVisuels.push('Icônes fonctionnelles');
-  if (document.getElementById('elem_aucun').checked)   elemsVisuels.push('Aucun élément graphique');
-
-  // Ressenti
-  var ressenti = [];
-  if (document.getElementById('res_serieux').checked)     ressenti.push('Sérieux');
-  if (document.getElementById('res_confiance').checked)   ressenti.push('Confiance');
-  if (document.getElementById('res_proximite').checked)   ressenti.push('Proximité');
-  if (document.getElementById('res_expertise').checked)   ressenti.push('Expertise');
-  if (document.getElementById('res_solidite').checked)    ressenti.push('Solidité');
-  if (document.getElementById('res_originalite').checked) ressenti.push('Originalité');
-  if (document.getElementById('res_dynamisme').checked)   ressenti.push('Dynamisme');
-
   // ── PARTIE 1 — Données artisan ──────────────────────────────────────────
   var partie1 = [
     '========================================',
-    'DEMANDE DE TEMPLATE DEVIS',
+    'DEMANDE DE TEMPLATE DEVIS ET FACTURE',
     '========================================',
     '',
     'PARTIE 1 — DONNÉES ARTISAN',
@@ -431,9 +386,8 @@ function envoyer() {
     'Couleur principale      : ' + couleur,
     'Couleur d\'accent        : ' + couleurAccent,
     'Style voulu             : ' + (style || '—'),
-    'Éléments visuels        : ' + (elemsVisuels.length > 0 ? elemsVisuels.join(', ') : 'non renseigné'),
-    'Impression souhaitée    : ' + (ressenti.length > 0 ? ressenti.join(', ') : '—'),
-    'Description du logo     : ' + (logoDesc || '—'),
+    'Mentions de confiance   : ' + (mentionsBadges.length > 0 ? mentionsBadges.join(' | ') : '—'),
+    'Logo (description)      : ' + (sansLogo ? 'Sans logo' : (logoDesc || '—')),
     'Devis existants         : ' + (devisExist === 'oui' ? 'Oui' : 'Non'),
   ];
   if (devisExist === 'oui') {
@@ -449,6 +403,7 @@ function envoyer() {
     '========================================',
     '',
     'Tu dois produire les templates de devis ET de facture pour un artisan du BTP.',
+    'En plus des fichiers de template, écris identite.style et identite.badges dans le client.json du client concerné, à partir des valeurs de la PARTIE 1.',
     '',
     'Fichiers à créer dans squelettes-reference/devis/<slug-artisan>-v1/ :',
     '  - template.html : gabarit Jinja2 pur, zéro donnée réelle codée en dur',
@@ -529,48 +484,46 @@ function envoyer() {
     'Jérémy valide le preview.html dans Chrome avant toute mise en production.',
     '',
     'Style visuel global selon "Style voulu" :',
-    '  Sobre et professionnel :',
+    '  sobre :',
     '    - border-radius : 2-4px partout (coins nets)',
     '    - fond en-tête : blanc pur, pas de teinte de fond',
     '    - lignes alt tableau : gris très léger (#F5F5F5)',
     '    - bandeau : sans pastille icône, titre seul',
     '    - icônes SVG : stroke-width 1.2, contour sans remplissage, angles géométriques',
     '    - footer : bordure supérieure fine gris clair',
-    '  Moderne et technique :',
+    '  moderne :',
     '    - border-radius : 4-6px (coins nets mais pas tranchants)',
     '    - fond en-tête : léger fond gris-bleu (#F4F7FA)',
     '    - lignes alt tableau : bleu très pâle (#EBF2FA)',
     '    - bandeau : pastille carrée avec icône document',
     '    - icônes SVG : stroke-width 1.8, mélange plein/contour, angles droits',
     '    - footer : bordure supérieure colorée (couleur principale 30% opacité)',
-    '  Chaleureux et artisanal :',
+    '  chaleureux :',
     '    - border-radius : 10-14px partout (coins très arrondis)',
-    '    - fond en-tête : teinte chaude dérivée de la couleur principale (#FDF8F3 si brun, sinon calculer)',
+    '    - fond en-tête : teinte chaude dérivée de la couleur principale',
     '    - lignes alt tableau : teinte chaude très légère',
     '    - bandeau : pastille ronde avec icône document',
     '    - icônes SVG : stroke-linecap round, stroke-linejoin round, formes douces',
     '    - footer : pas de bordure, texte centré couleur chaude',
-    '  Si aucun style sélectionné → appliquer "Sobre et professionnel" par défaut',
+    '  Si aucun style sélectionné → appliquer "sobre" par défaut',
     '',
-    'Logo selon "Description de votre logo" :',
-    '  Description fournie (différente de "—") → générer un SVG inline simple (40x40px) qui représente',
-    '    visuellement le concept décrit, placé à la même position que le monogramme lettre.',
-    '    Le SVG doit être lisible en petit format, couleur principale sur fond blanc ou transparent.',
-    '    Si la description est trop vague pour un SVG reconnaissable, faire un monogramme stylisé',
-    '    (2 lettres initiales) plutôt qu\'une lettre seule.',
-    '  Description absente ou "—" → monogramme : première lettre de la raison sociale,',
-    '    carré ou cercle selon le style voulu (carré=sobre/moderne, cercle=chaleureux).',
+    'Logo :',
+    '  Le logo est fourni par Jérémy sous forme de fichier image (PNG, jamais PDF —',
+    '    voir contrainte technique <img src>), généré en dehors de l\'atelier puis',
+    '    transmis avec le brief.',
+    '  Ne jamais générer ni rechercher d\'icône automatiquement.',
+    '  Intégrer le fichier fourni via identite.logo selon le mécanisme déjà existant.',
+    '  "Sans logo" (case cochée) → identite.logo reste null. Aucun fallback à générer.',
     '',
-    'Éléments visuels à inclure selon les cases cochées :',
-    '  Badges qualité cochés          → inclure exactement 3 badges, contenu dérivé de l\'activité principale fournie en PARTIE 1',
-    '  Icônes fonctionnelles cochées  → icônes SVG sur zones paiement, bancaire, conditions',
-    '  Aucun élément graphique coché  → supprimer badges et icônes, document texte pur',
-    '  Si aucune case cochée          → document texte pur, aucun élément graphique',
+    'Badges (mentions de confiance) :',
+    '  Mentions fournies en PARTIE 1 → créer un badge par mention, icône SVG simple,',
+    '    texte exact fourni par l\'artisan. Ne pas reformuler, ne pas ajouter.',
+    '  Aucune mention → inclure 3 badges génériques adaptés à l\'activité principale.',
   ];
 
   var corps = partie1.concat(partie2).join('\n');
   var sujet  = 'Préférences template — ' + nom;
-  var mailto = 'mailto:hoffman.jeremy@orange.fr'
+  var mailto = 'mailto:j.hoffman66@laposte.net'
     + '?subject=' + encodeURIComponent(sujet)
     + '&body='    + encodeURIComponent(corps);
   window.location.href = mailto;
