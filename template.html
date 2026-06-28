@@ -213,12 +213,21 @@ input[type=color] {
   </div>
 
   <div class="field">
-    <label>Style voulu <span class="opt">(facultatif)</span></label>
-    <div class="note">Ce choix s'applique à la fois au devis et à la facture — un seul style pour les deux documents.</div>
+    <label>Style du devis <span class="opt">(facultatif)</span></label>
     <div class="radios" style="margin-top: 6px;">
-      <label class="radio-item"><input type="radio" name="style" value="sobre"> Sobre et professionnel</label>
-      <label class="radio-item"><input type="radio" name="style" value="moderne"> Moderne et technique</label>
-      <label class="radio-item"><input type="radio" name="style" value="chaleureux"> Chaleureux et artisanal</label>
+      <label class="radio-item"><input type="radio" name="style_devis" value="sobre" onchange="syncStyleFacture(this.value)"> Sobre et professionnel</label>
+      <label class="radio-item"><input type="radio" name="style_devis" value="moderne" onchange="syncStyleFacture(this.value)"> Moderne et technique</label>
+      <label class="radio-item"><input type="radio" name="style_devis" value="chaleureux" onchange="syncStyleFacture(this.value)"> Chaleureux et artisanal</label>
+    </div>
+  </div>
+
+  <div class="field">
+    <label>Style de la facture <span class="opt">(facultatif — identique au devis par défaut)</span></label>
+    <div class="note">Laissez identique si vous souhaitez la même mise en page pour les deux documents.</div>
+    <div class="radios" style="margin-top: 6px;">
+      <label class="radio-item"><input type="radio" name="style_facture" value="sobre" onchange="styleFactureManuel=true"> Sobre et professionnel</label>
+      <label class="radio-item"><input type="radio" name="style_facture" value="moderne" onchange="styleFactureManuel=true"> Moderne et technique</label>
+      <label class="radio-item"><input type="radio" name="style_facture" value="chaleureux" onchange="styleFactureManuel=true"> Chaleureux et artisanal</label>
     </div>
   </div>
 
@@ -295,6 +304,16 @@ function toggleLogo(noLogo) {
   document.getElementById('bloc_logo_desc').style.display = noLogo ? 'none' : 'block';
 }
 
+var styleFactureManuel = false;
+
+function syncStyleFacture(val) {
+  if (styleFactureManuel) return;
+  var radios = document.querySelectorAll('input[name="style_facture"]');
+  for (var i = 0; i < radios.length; i++) {
+    if (radios[i].value === val) radios[i].checked = true;
+  }
+}
+
 function v(id) {
   var el = document.getElementById(id);
   return el ? el.value.trim() : '';
@@ -358,8 +377,10 @@ function envoyer() {
     var b = Math.max(0, parseInt(hex.slice(4,6),16) - 40);
     return '#' + [r,g,b].map(function(x){return x.toString(16).padStart(2,'0');}).join('');
   })();
-  var styleEl  = document.querySelector('input[name="style"]:checked');
-  var style    = styleEl ? styleEl.value : '';
+  var styleDevisEl   = document.querySelector('input[name="style_devis"]:checked');
+  var styleFactureEl = document.querySelector('input[name="style_facture"]:checked');
+  var styleDevis     = styleDevisEl   ? styleDevisEl.value   : '';
+  var styleFacture   = styleFactureEl ? styleFactureEl.value : '';
   var mentionsRaw = v('mentions_confiance');
   var mentionsBadges = mentionsRaw.length > 0
     ? mentionsRaw.split('\n').map(function(l) { return l.trim(); }).filter(function(l) { return l.length > 0; })
@@ -385,7 +406,8 @@ function envoyer() {
     'Activités secondaires   : ' + (activitesSec || '—'),
     'Couleur principale      : ' + couleur,
     'Couleur d\'accent        : ' + couleurAccent,
-    'Style voulu             : ' + (style || '—'),
+    'Style devis             : ' + (styleDevis   || '—'),
+    'Style facture           : ' + (styleFacture || (styleDevis ? styleDevis + ' (même que devis)' : '—')),
     'Mentions de confiance   : ' + (mentionsBadges.length > 0 ? mentionsBadges.join(' | ') : '—'),
     'Logo (description)      : ' + (sansLogo ? 'Sans logo' : (logoDesc || '—')),
     'Devis existants         : ' + (devisExist === 'oui' ? 'Oui' : 'Non'),
@@ -403,7 +425,7 @@ function envoyer() {
     '========================================',
     '',
     'Tu dois produire les templates de devis ET de facture pour un artisan du BTP.',
-    'En plus des fichiers de template, écris identite.style et identite.badges dans le client.json du client concerné, à partir des valeurs de la PARTIE 1.',
+    'En plus des fichiers de template, écris identite.style_devis, identite.style_facture et identite.badges dans le client.json du client concerné, à partir des valeurs de la PARTIE 1.',
     '',
     'Fichiers à créer dans E:\\Atelier-Agents\\construction-clients\\<slug-artisan>\\ :',
     '  - template.html : gabarit Jinja2 pur, zéro donnée réelle codée en dur',
@@ -533,7 +555,144 @@ function envoyer() {
     '  Aucune mention → inclure 3 badges génériques adaptés à l\'activité principale.',
   ];
 
-  var corps = partie1.concat(partie2).join('\n');
+  var partie3 = [
+    '========================================',
+    'PARTIE 3 — INSTRUCTIONS TECHNIQUES FIXES — FACTURE',
+    '========================================',
+    '',
+    'Fichiers à créer dans E:\\Atelier-Agents\\construction-clients\\<slug-artisan>\\templates-factures\\<style>\\v1\\ :',
+    '  - template.html : gabarit Jinja2 pur, zéro donnée réelle codée en dur',
+    '  - styles.css    : feuille de style, tokens couleur comme pour le devis',
+    '  - meta.json     : schéma exact ci-dessous',
+    '  - fonts/        : Lato-Regular.ttf, Lato-Bold.ttf, Lato-Italic.ttf',
+    '  - preview.html  : même structure HTML mais données fictives codées en dur,',
+    '                    CSS embarqué ou lien vers styles.css, ouvre sans serveur',
+    '',
+    'Squelette de référence à consulter :',
+    '  E:\\Atelier-Agents\\squelettes-reference\\factures\\v1\\',
+    '  → template.html, styles.css, meta.json déjà structurés et validés.',
+    '  Adapter les couleurs (tokens → valeurs réelles), le style visuel,',
+    '  les badges. Ne pas modifier la structure des variables Jinja2.',
+    '',
+    'Schéma meta.json facture :',
+    '  {',
+    '    "version_format": "1",',
+    '    "mentions_legales": "...",',
+    '    "logo": null',
+    '  }',
+    '  Note : conditions de règlement → uniquement dans client.json (reglement.mode',
+    '  et reglement.conditions). Ne jamais les mettre dans meta.json.',
+    '',
+    'Contrat de variables Jinja2 — facture (ne pas en inventer d\'autres) :',
+    '',
+    '  Artisan (snapshot plat — PAS de artisan.identite.xxx pour la facture) :',
+    '    {{ artisan.raison_sociale }}',
+    '    {{ artisan.adresse }}',
+    '    {{ artisan.telephone }}',
+    '    {{ artisan.email }}',
+    '    {{ artisan.siret }}',
+    '    {{ artisan.numero_tva }}',
+    '    {% if artisan.logo %}...{% endif %}',
+    '    {% if artisan.banque and artisan.banque.iban %}',
+    '      {{ artisan.banque.titulaire }} {{ artisan.banque.iban }} {{ artisan.banque.bic }}',
+    '    {% endif %}',
+    '    {% if artisan.assurance_decennale and artisan.assurance_decennale.assureur %}',
+    '      {{ artisan.assurance_decennale.assureur }}',
+    '      {{ artisan.assurance_decennale.numero_police }}',
+    '    {% endif %}',
+    '',
+    '  Règlement (depuis artisan uniquement — plus de fallback meta en nouveau template) :',
+    '    {% if artisan.reglement and artisan.reglement.conditions %}',
+    '      {{ artisan.reglement.conditions }}',
+    '      {% if artisan.reglement.mode %}{{ artisan.reglement.mode | join(\', \') }}{% endif %}',
+    '    {% else %}À réception de facture{% endif %}',
+    '',
+    '  Mention TVA franchise (calculée automatiquement — jamais en texte libre dans meta.json) :',
+    '    {% if artisan.tva and artisan.tva.regime == "franchise" %}',
+    '      TVA non applicable — art. 293B du CGI',
+    '    {% endif %}',
+    '',
+    '  Facture :',
+    '    {{ facture.numero_facture }}',
+    '    {{ facture.date_facture | format_date }}',
+    '    {% if facture.date_echeance %}{{ facture.date_echeance | format_date }}{% endif %}',
+    '',
+    '  Client final :',
+    '    {{ facture.client_final.nom_prenom }}',
+    '    {{ facture.client_final.raison_sociale }}',
+    '    {{ facture.client_final.adresse }}',
+    '    {{ facture.client_final.adresse_chantier }}',
+    '    {{ facture.client_final.telephone }}',
+    '    {{ facture.client_final.email }}',
+    '',
+    '  Lignes ({% for ligne in facture.lignes %}) :',
+    '    {{ ligne.designation }}',
+    '    {{ ligne.quantite | format_decimal }}',
+    '    {{ ligne.unite }}',
+    '    {{ ligne.prix_unitaire_ht | format_montant }}',
+    '    {{ ligne.tva | format_decimal }}',
+    '    {{ ligne.montant_ht | format_montant }}',
+    '',
+    '  Totaux :',
+    '    {{ facture.totaux.ht | format_montant }}',
+    '    {{ facture.totaux.ttc | format_montant }}',
+    '    Ventilation ({% for ventil in facture.totaux.ventilation_tva %}) :',
+    '      {{ ventil.taux | format_decimal }}',
+    '      {{ ventil.montant_tva | format_montant }}',
+    '',
+    '  Meta (depuis meta.json — uniquement mentions légales et logo) :',
+    '    {{ meta.mentions_legales }}',
+    '',
+    'Filtres Jinja2 disponibles (identiques au devis) :',
+    '  | format_date    : "2026-06-14" → "14 juin 2026"',
+    '  | format_montant : 1234.5 → "1 234,50"',
+    '  | format_decimal : 22.0 → "22",  1.5 → "1,5"',
+    '',
+    'Rendu PDF : Playwright/Chromium.',
+    '  @page { size: A4 portrait; margin: 15mm; }',
+    '  print_background: True — les fonds colorés sont rendus.',
+    '  Flexbox, border-radius, box-shadow, SVG inline : tous supportés.',
+    '',
+    'Style visuel global selon "Style facture" (même règle que le devis) :',
+    '  sobre :',
+    '    - border-radius : 2-4px partout (coins nets)',
+    '    - fond en-tête : blanc pur, pas de teinte de fond',
+    '    - lignes alt tableau : gris très léger (#F5F5F5)',
+    '    - bandeau : sans pastille icône, titre seul',
+    '    - icônes SVG : stroke-width 1.2, contour sans remplissage, angles géométriques',
+    '    - footer : bordure supérieure fine gris clair',
+    '  moderne :',
+    '    - border-radius : 4-6px (coins nets mais pas tranchants)',
+    '    - fond en-tête : léger fond gris-bleu (#F4F7FA)',
+    '    - lignes alt tableau : bleu très pâle (#EBF2FA)',
+    '    - bandeau : pastille carrée avec icône document',
+    '    - icônes SVG : stroke-width 1.8, mélange plein/contour, angles droits',
+    '    - footer : bordure supérieure colorée (couleur principale 30% opacité)',
+    '  chaleureux :',
+    '    - border-radius : 10-14px partout (coins très arrondis)',
+    '    - fond en-tête : teinte chaude dérivée de la couleur principale',
+    '    - lignes alt tableau : teinte chaude très légère',
+    '    - bandeau : pastille ronde avec icône document',
+    '    - icônes SVG : stroke-linecap round, stroke-linejoin round, formes douces',
+    '    - footer : pas de bordure, texte centré couleur chaude',
+    '  Si aucun style sélectionné → appliquer "sobre" par défaut',
+    '',
+    'Couleurs — même règle de répartition que le devis (voir PARTIE 2).',
+    '',
+    'Logo :',
+    '  Même mécanisme que le devis — fichier logo.png dans le dossier de construction.',
+    '  "Sans logo" → identite.logo reste null. Aucun fallback.',
+    '',
+    'Badges (mentions de confiance) :',
+    '  Mentions fournies en PARTIE 1 → créer un badge par mention, icône SVG simple,',
+    '    texte exact fourni par l\'artisan. Ne pas reformuler, ne pas ajouter.',
+    '  Aucune mention → inclure 3 badges génériques adaptés à l\'activité principale.',
+    '',
+    'Règle de sécurité : ne jamais écrire dans E:\\Donnees-Clients.',
+    'Jérémy valide le preview.html dans Chrome avant toute mise en production.',
+  ];
+
+  var corps = partie1.concat(partie2).concat(partie3).join('\n');
   var sujet  = 'Préférences template — ' + nom;
   var mailto = 'mailto:j.hoffman66@laposte.net'
     + '?subject=' + encodeURIComponent(sujet)
