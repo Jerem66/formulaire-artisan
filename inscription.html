@@ -95,6 +95,7 @@ input.err {
 .check-item { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #333; cursor: pointer; }
 .check-item input[type=checkbox] { width: 15px; height: 15px; cursor: pointer; accent-color: #2c6fad; }
 #qual_autre_texte { margin-top: 8px; display: none; }
+#cond_autre_texte { margin-top: 8px; display: none; }
 
 /* Actions */
 .actions { margin-top: 6px; }
@@ -229,6 +230,31 @@ input.err {
   </div>
 </div>
 
+<!-- Bloc 3 : Règlement -->
+<div class="bloc">
+  <h2>Bloc 3 — Conditions de règlement <span class="opt">(facultatif)</span></h2>
+  <div class="field">
+    <label>Mode(s) de règlement accepté(s)</label>
+    <div class="checks">
+      <label class="check-item"><input type="checkbox" id="mode_virement"> Virement bancaire</label>
+      <label class="check-item"><input type="checkbox" id="mode_cheque"> Chèque</label>
+      <label class="check-item"><input type="checkbox" id="mode_especes"> Espèces</label>
+    </div>
+  </div>
+  <div class="field">
+    <label>Délai de paiement</label>
+    <div class="radios">
+      <label class="radio-item"><input type="radio" name="conditions" value="À réception de facture"> À réception de facture</label>
+      <label class="radio-item"><input type="radio" name="conditions" value="30 jours"> 30 jours</label>
+      <label class="radio-item"><input type="radio" name="conditions" value="45 jours"> 45 jours</label>
+      <label class="radio-item"><input type="radio" name="conditions" value="__autre__" onchange="toggleCondAutre(this)"> Autre</label>
+    </div>
+    <div id="cond_autre_texte">
+      <input type="text" id="cond_autre_detail" placeholder="Précisez les conditions">
+    </div>
+  </div>
+</div>
+
 <div class="actions">
   <button class="btn-gen" onclick="envoyer()">Envoyer mon inscription</button>
 </div>
@@ -236,6 +262,10 @@ input.err {
 <script>
 function toggleAutre(cb) {
   document.getElementById('qual_autre_texte').style.display = cb.checked ? 'block' : 'none';
+}
+
+function toggleCondAutre(el) {
+  document.getElementById('cond_autre_texte').style.display = el.checked ? 'block' : 'none';
 }
 
 function v(id) {
@@ -316,6 +346,17 @@ function envoyer() {
     autreDetail = v('qual_autre_detail') || null;
   }
 
+  // Règlement
+  var modes = [];
+  if (document.getElementById('mode_virement').checked) modes.push('Virement bancaire');
+  if (document.getElementById('mode_cheque').checked)   modes.push('Chèque');
+  if (document.getElementById('mode_especes').checked)  modes.push('Espèces');
+  var condEl = document.querySelector('input[name="conditions"]:checked');
+  var conditions = null;
+  if (condEl) {
+    conditions = condEl.value === '__autre__' ? (v('cond_autre_detail') || null) : condEl.value;
+  }
+
   var data = {
     type: 'inscription_artisan',
     identite: {
@@ -336,7 +377,9 @@ function envoyer() {
       }
     },
     qualifications:            quals.length > 0 ? quals : [],
-    qualification_autre_detail: autreDetail
+    qualification_autre_detail: autreDetail,
+    mode_reglement:             modes.length > 0 ? modes : [],
+    conditions_reglement:       conditions
   };
 
   var json = JSON.stringify(data, null, 2);
