@@ -195,7 +195,7 @@ input[type=color] {
   <h2>Bloc 2 — Identité visuelle</h2>
 
   <div class="field">
-    <label>Couleur principale <span class="opt">(facultatif — celle de votre logo ou votre préférence)</span></label>
+    <label>Couleur principale du devis <span class="opt">(facultatif — celle de votre logo ou votre préférence)</span></label>
     <div class="color-row">
       <input type="color" id="couleur_picker" value="#2c6fad" oninput="syncHex(this.value)">
       <input type="text"  id="couleur_hex"    value="#2c6fad" placeholder="#2c6fad" maxlength="7" oninput="syncPicker(this.value)">
@@ -204,7 +204,7 @@ input[type=color] {
   </div>
 
   <div class="field">
-    <label>Couleur d'accent <span class="opt">(facultatif — ex : couleur de vos véhicules ou logo secondaire)</span></label>
+    <label>Couleur d'accent du devis <span class="opt">(facultatif — ex : couleur de vos véhicules ou logo secondaire)</span></label>
     <div class="color-row">
       <input type="color" id="accent_picker" value="#888888" oninput="syncAccentHex(this.value)">
       <input type="text"  id="accent_hex"    placeholder="Laissez vide pour calcul automatique" maxlength="7" oninput="syncAccentPicker(this.value)">
@@ -219,6 +219,24 @@ input[type=color] {
       <label class="radio-item"><input type="radio" name="style_devis" value="moderne" onchange="syncStyleFacture(this.value)"> Moderne et technique</label>
       <label class="radio-item"><input type="radio" name="style_devis" value="chaleureux" onchange="syncStyleFacture(this.value)"> Chaleureux et artisanal</label>
     </div>
+  </div>
+
+  <div class="field">
+    <label>Couleur principale de la facture <span class="opt">(facultatif — identique au devis par défaut)</span></label>
+    <div class="color-row">
+      <input type="color" id="couleur_facture_picker" value="#2c6fad" oninput="couleurFactureManuel=true; syncCouleurFactureHex(this.value)">
+      <input type="text"  id="couleur_facture_hex"    value="#2c6fad" placeholder="#2c6fad" maxlength="7" oninput="couleurFactureManuel=true; syncCouleurFacturePicker(this.value)">
+    </div>
+    <div class="note">Cliquez sur le carré de couleur ou saisissez un code hexadécimal (#RRGGBB).</div>
+  </div>
+
+  <div class="field">
+    <label>Couleur d'accent de la facture <span class="opt">(facultatif — identique au devis par défaut)</span></label>
+    <div class="color-row">
+      <input type="color" id="accent_facture_picker" value="#888888" oninput="couleurFactureManuel=true; syncAccentFactureHex(this.value)">
+      <input type="text"  id="accent_facture_hex"    placeholder="Laissez vide pour calcul automatique" maxlength="7" oninput="couleurFactureManuel=true; syncAccentFacturePicker(this.value)">
+    </div>
+    <div class="note">Si non renseignée, la couleur d'accent sera calculée automatiquement depuis la couleur principale de la facture.</div>
   </div>
 
   <div class="field">
@@ -280,19 +298,35 @@ input[type=color] {
 <script>
 function syncHex(val) {
   document.getElementById('couleur_hex').value = val;
+  if (!couleurFactureManuel) {
+    document.getElementById('couleur_facture_hex').value = val;
+    document.getElementById('couleur_facture_picker').value = val;
+  }
 }
 function syncPicker(val) {
   if (/^#[0-9A-Fa-f]{6}$/.test(val)) {
     document.getElementById('couleur_picker').value = val;
+    if (!couleurFactureManuel) {
+      document.getElementById('couleur_facture_hex').value = val;
+      document.getElementById('couleur_facture_picker').value = val;
+    }
   }
 }
 
 function syncAccentHex(val) {
   document.getElementById('accent_hex').value = val;
+  if (!couleurFactureManuel) {
+    document.getElementById('accent_facture_hex').value = val;
+    document.getElementById('accent_facture_picker').value = val;
+  }
 }
 function syncAccentPicker(val) {
   if (/^#[0-9A-Fa-f]{6}$/.test(val)) {
     document.getElementById('accent_picker').value = val;
+    if (!couleurFactureManuel) {
+      document.getElementById('accent_facture_hex').value = val;
+      document.getElementById('accent_facture_picker').value = val;
+    }
   }
 }
 
@@ -311,6 +345,25 @@ function syncStyleFacture(val) {
   var radios = document.querySelectorAll('input[name="style_facture"]');
   for (var i = 0; i < radios.length; i++) {
     if (radios[i].value === val) radios[i].checked = true;
+  }
+}
+
+var couleurFactureManuel = false;
+
+function syncCouleurFactureHex(val) {
+  document.getElementById('couleur_facture_hex').value = val;
+}
+function syncCouleurFacturePicker(val) {
+  if (/^#[0-9A-Fa-f]{6}$/.test(val)) {
+    document.getElementById('couleur_facture_picker').value = val;
+  }
+}
+function syncAccentFactureHex(val) {
+  document.getElementById('accent_facture_hex').value = val;
+}
+function syncAccentFacturePicker(val) {
+  if (/^#[0-9A-Fa-f]{6}$/.test(val)) {
+    document.getElementById('accent_facture_picker').value = val;
   }
 }
 
@@ -377,6 +430,16 @@ function envoyer() {
     var b = Math.max(0, parseInt(hex.slice(4,6),16) - 40);
     return '#' + [r,g,b].map(function(x){return x.toString(16).padStart(2,'0');}).join('');
   })();
+  var couleurFacture       = v('couleur_facture_hex') || document.getElementById('couleur_facture_picker').value;
+  var accentFactureHex     = v('accent_facture_hex');
+  var couleurAccentFacture = (function() {
+    if (/^#[0-9A-Fa-f]{6}$/.test(accentFactureHex)) return accentFactureHex;
+    var hex = couleurFacture.replace('#','');
+    var r = Math.max(0, parseInt(hex.slice(0,2),16) - 40);
+    var g = Math.max(0, parseInt(hex.slice(2,4),16) - 40);
+    var b = Math.max(0, parseInt(hex.slice(4,6),16) - 40);
+    return '#' + [r,g,b].map(function(x){return x.toString(16).padStart(2,'0');}).join('');
+  })();
   var styleDevisEl   = document.querySelector('input[name="style_devis"]:checked');
   var styleFactureEl = document.querySelector('input[name="style_facture"]:checked');
   var styleDevis     = styleDevisEl   ? styleDevisEl.value   : '';
@@ -404,8 +467,10 @@ function envoyer() {
     'Clientèle principale    : ' + clientele,
     'Activité principale     : ' + activite,
     'Activités secondaires   : ' + (activitesSec || '—'),
-    'Couleur principale      : ' + couleur,
-    'Couleur d\'accent        : ' + couleurAccent,
+    'Couleur principale devis  : ' + couleur,
+    'Couleur d\'accent devis    : ' + couleurAccent,
+    'Couleur principale facture : ' + (couleurFacture === couleur ? couleurFacture + ' (même que devis)' : couleurFacture),
+    'Couleur d\'accent facture  : ' + (couleurAccentFacture === couleurAccent ? couleurAccentFacture + ' (même que devis)' : couleurAccentFacture),
     'Style devis             : ' + (styleDevis   || '—'),
     'Style facture           : ' + (styleFacture || (styleDevis ? styleDevis + ' (même que devis)' : '—')),
     'Mentions de confiance   : ' + (mentionsBadges.length > 0 ? mentionsBadges.join(' | ') : '—'),
