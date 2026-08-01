@@ -239,18 +239,9 @@ tbody tr:last-child td { border-bottom: none; }
   </div>
 </div>
 
-<!-- Bloc 2 : Template -->
+<!-- Bloc 2 : Lignes -->
 <div class="bloc">
-  <h2>Bloc 2 — Template</h2>
-  <div class="field">
-    <label for="template_nom">Modèle de devis <span class="opt">(V1 — un seul modèle disponible)</span></label>
-    <input type="text" id="template_nom" value="standard" readonly>
-  </div>
-</div>
-
-<!-- Bloc 3 : Lignes -->
-<div class="bloc">
-  <h2>Bloc 3 — Lignes de prestation <span class="req">*</span></h2>
+  <h2>Bloc 2 — Lignes de prestation <span class="req">*</span></h2>
   <div class="lignes-wrap">
     <table>
       <thead>
@@ -270,9 +261,9 @@ tbody tr:last-child td { border-bottom: none; }
   <button type="button" class="btn-add" onclick="ajouterLigne()">+ Ajouter une ligne</button>
 </div>
 
-<!-- Bloc 4 : Infos complémentaires -->
+<!-- Bloc 3 : Infos complémentaires -->
 <div class="bloc">
-  <h2>Bloc 4 — Informations complémentaires <span class="opt">(facultatif)</span></h2>
+  <h2>Bloc 3 — Informations complémentaires <span class="opt">(facultatif)</span></h2>
   <div class="field">
     <textarea id="infos" rows="4" placeholder="Accès au chantier, contraintes particulières, matériaux spécifiés par le client, garanties à mentionner..."></textarea>
   </div>
@@ -425,7 +416,6 @@ tbody tr:last-child td { border-bottom: none; }
 
     var data = {
       slug_artisan:  slug,
-      template_nom:  v('template_nom') || 'standard',
       client_final: {
         nom_prenom:      nomPrenom      || null,
         raison_sociale:  raisonSociale  || null,
