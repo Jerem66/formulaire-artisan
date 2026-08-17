@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Demande de facture directe</title>
+<style>
+:root {
+  --bleu:        #1a4b8c;
+  --bleu-clair:  #2563b0;
+  --fond:        #f5f7fa;
+  --bordure:     #d1d5db;
+  --texte:       #1f2937;
+  --aide:        #6b7280;
+  --rouge:       #dc2626;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--fond);
+  color: var(--texte);
+  line-height: 1.55;
+}
+
+.entete {
+  background: var(--bleu);
+  color: white;
+  padding: 2rem 1.5rem;
+  text-align: center;
+}
+.entete h1 { font-size: 1.55rem; font-weight: 700; }
+.entete p  { margin-top: 0.5rem; font-size: 0.92rem; opacity: 0.85; max-width: 560px; margin-inline: auto; }
+
+.conteneur {
+  max-width: 780px;
+  margin: 1.75rem auto;
+  padding: 0 1rem 4rem;
+}
+
+.section {
+  background: white;
+  border: 1px solid var(--bordure);
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1.1rem;
+}
+
+.section h2 {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--bleu);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 1.2rem;
+  padding-bottom: 0.55rem;
+  border-bottom: 2px solid var(--bleu);
+}
+
+.champ { margin-bottom: 1rem; }
+.champ:last-child { margin-bottom: 0; }
+
+label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 0.3rem;
+}
+
+.req  { color: var(--rouge); margin-left: 2px; }
+.fac  { color: var(--aide); font-weight: 400; font-size: 0.8rem; }
+
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="date"],
+input[type="number"],
+textarea,
+select {
+  width: 100%;
+  padding: 0.52rem 0.72rem;
+  border: 1px solid var(--bordure);
+  border-radius: 6px;
+  font-size: 0.925rem;
+  font-family: inherit;
+  color: var(--texte);
+  background: white;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: var(--bleu-clair);
+  box-shadow: 0 0 0 3px rgba(37, 99, 176, 0.13);
+}
+
+.aide    { font-size: 0.78rem; color: var(--aide); margin-top: 0.28rem; }
+.exemple { font-size: 0.77rem; color: var(--aide); font-style: italic; margin-top: 0.22rem; }
+
+.grille-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+@media (max-width: 580px) { .grille-2 { grid-template-columns: 1fr; } }
+
+/* --- Type de document --- */
+.type-doc-groupe {
+  display: flex;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+}
+
+.type-doc-groupe .choix {
+  flex: 1;
+  min-width: 120px;
+}
+
+.type-doc-groupe .choix input[type="radio"] {
+  display: none;
+}
+
+.type-doc-groupe .choix label {
+  display: block;
+  text-align: center;
+  padding: 0.65rem 0.8rem;
+  border: 2px solid var(--bordure);
+  border-radius: 7px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--aide);
+  transition: all 0.15s;
+  user-select: none;
+}
+
+.type-doc-groupe .choix label:hover {
+  border-color: var(--bleu-clair);
+  color: var(--bleu-clair);
+}
+
+.type-doc-groupe .choix.actif label {
+  border-color: var(--bleu);
+  background: #eff6ff;
+  color: var(--bleu);
+}
+
+/* --- Lignes de facturation --- */
+.ligne {
+  border: 1px solid #e5e7eb;
+  border-radius: 7px;
+  padding: 1rem;
+  margin-bottom: 0.75rem;
+  background: #fafafa;
+  position: relative;
+}
+
+.ligne-entete {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.8rem;
+}
+
+.ligne-num {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--aide);
+}
+
+.btn-supprimer {
+  background: none;
+  border: none;
+  color: #9ca3af;
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0.15rem 0.3rem;
+  border-radius: 4px;
+  line-height: 1;
+  transition: color 0.12s;
+}
+.btn-supprimer:hover { color: var(--rouge); }
+
+.ligne-grille {
+  display: grid;
+  grid-template-columns: 3fr 0.9fr 1.1fr 1.5fr 1fr;
+  gap: 0.65rem;
+}
+
+@media (max-width: 640px) {
+  .ligne-grille {
+    grid-template-columns: 1fr 1fr;
+  }
+  .col-designation { grid-column: span 2; }
+}
+
+/* --- Boutons --- */
+.btn-ajouter {
+  width: 100%;
+  padding: 0.65rem 1rem;
+  background: none;
+  border: 2px dashed var(--bordure);
+  border-radius: 7px;
+  color: var(--bleu-clair);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.btn-ajouter:hover {
+  border-color: var(--bleu-clair);
+  background: #eff6ff;
+}
+
+.btn-generer {
+  display: block;
+  width: 100%;
+  padding: 0.95rem;
+  background: var(--bleu);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 1.5rem;
+  transition: background 0.15s;
+  letter-spacing: 0.01em;
+}
+.btn-generer:hover { background: var(--bleu-clair); }
+
+/* --- Erreurs --- */
+.erreur-bloc {
+  background: #fef2f2;
+  border: 1px solid #fca5a5;
+  border-radius: 7px;
+  padding: 0.8rem 1rem;
+  color: var(--rouge);
+  font-size: 0.875rem;
+  margin-top: 1rem;
+  display: none;
+}
+.erreur-bloc ul {
+  margin-top: 0.4rem;
+  padding-left: 1.2rem;
+}
+
+.note-bas {
+  text-align: center;
+  font-size: 0.79rem;
+  color: var(--aide);
+  margin-top: 2rem;
+  line-height: 1.6;
+}
+</style>
+</head>
+<body>
+
+<div class="entete">
+  <h1>Demande de facture directe</h1>
+  <p>Pour une intervention sans devis préalable — dépannage, travaux rapides. Remplissez le formulaire, il sera envoyé à votre gestionnaire par e-mail.</p>
+</div>
+
+<div class="conteneur">
+
+  <!-- 1. Identifiant artisan -->
+  <div class="section">
+    <h2>Identifiant artisan</h2>
+    <div class="champ">
+      <label for="artisan_slug">Identifiant technique <span class="req">*</span></label>
+      <input type="text" id="artisan_slug" placeholder="ex : lefevre-peinture">
+      <p class="exemple">Exemples : lefevre-peinture, dupont-electricite, bernard-couverture, pellegrini-thermique</p>
+      <p class="aide">Cet identifiant vous a été communiqué lors de votre inscription. Minuscules, tirets, sans accents.</p>
+    </div>
+  </div>
+
+  <!-- 2. Type de document -->
+  <div class="section">
+    <h2>Type de document</h2>
+    <div class="champ">
+      <div class="type-doc-groupe" id="type-doc-groupe">
+        <div class="choix actif" data-valeur="normale">
+          <input type="radio" name="type_document" id="td-normale" value="normale" checked>
+          <label for="td-normale">Facture</label>
+        </div>
+        <div class="choix" data-valeur="acompte">
+          <input type="radio" name="type_document" id="td-acompte" value="acompte">
+          <label for="td-acompte">Acompte</label>
+        </div>
+        <div class="choix" data-valeur="solde">
+          <input type="radio" name="type_document" id="td-solde" value="solde">
+          <label for="td-solde">Solde final</label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Dates -->
+  <div class="section">
+    <h2>Dates</h2>
+    <div class="grille-2">
+      <div class="champ">
+        <label for="date_facture">Date de la facture <span class="req">*</span></label>
+        <input type="date" id="date_facture">
+      </div>
+      <div class="champ">
+        <label for="date_echeance">Date d'échéance <span class="fac">(facultatif)</span></label>
+        <input type="date" id="date_echeance">
+        <p class="aide">Laisser vide pour calcul automatique.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. Client final -->
+  <div class="section">
+    <h2>Client</h2>
+    <div class="grille-2">
+      <div class="champ">
+        <label for="nom_prenom">Nom et prénom <span class="req">*</span></label>
+        <input type="text" id="nom_prenom" placeholder="ex : Marie Dupont">
+        <p class="aide">Ou renseignez la raison sociale si client professionnel.</p>
+      </div>
+      <div class="champ">
+        <label for="raison_sociale">Raison sociale <span class="fac">(facultatif)</span></label>
+        <input type="text" id="raison_sociale" placeholder="ex : SCI Les Chênes">
+      </div>
+    </div>
+    <div class="champ">
+      <label for="adresse">Adresse de facturation <span class="req">*</span></label>
+      <input type="text" id="adresse" placeholder="ex : 14 rue du Maréchal Foch, 33000 Bordeaux">
+    </div>
+    <div class="champ">
+      <label for="adresse_chantier">Adresse du chantier <span class="fac">(facultatif — si différente de la facturation)</span></label>
+      <input type="text" id="adresse_chantier" placeholder="ex : 8 impasse des Iris, 33200 Bordeaux">
+    </div>
+    <div class="grille-2">
+      <div class="champ">
+        <label for="telephone">Téléphone <span class="req">*</span></label>
+        <input type="tel" id="telephone" placeholder="06 12 34 56 78">
+      </div>
+      <div class="champ">
+        <label for="email_client">E-mail <span class="req">*</span></label>
+        <input type="email" id="email_client" placeholder="client@email.fr">
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. Lignes de facturation -->
+  <div class="section">
+    <h2>Lignes de facturation</h2>
+    <div id="conteneur-lignes"></div>
+    <p class="aide" style="margin-bottom:0.6rem">En franchise de TVA ? Sélectionnez 0 % sur chaque ligne.</p>
+    <button type="button" class="btn-ajouter" onclick="ajouterLigne()">+ Ajouter une ligne</button>
+  </div>
+
+  <!-- 6. Informations complémentaires -->
+  <div class="section">
+    <h2>Informations complémentaires <span class="fac">(facultatif)</span></h2>
+    <div class="champ">
+      <textarea id="info_comp" rows="3"
+        placeholder="Ex : Intervention d'urgence suite à dégât des eaux — accès coordonné avec le syndic."></textarea>
+    </div>
+  </div>
+
+  <div id="erreur-bloc" class="erreur-bloc"></div>
+
+  <button type="button" class="btn-generer" onclick="generer()">Générer et envoyer par e-mail →</button>
+
+  <p class="note-bas">
+    Ce formulaire génère un JSON envoyé par e-mail à votre gestionnaire.<br>
+    Votre facture sera produite après validation et vous sera transmise dans les meilleurs délais.
+  </p>
+
+</div>
+
+<script>
+// --- Date du jour ---
+(function () {
+  const iso = new Date().toISOString().slice(0, 10);
+  document.getElementById('date_facture').value = iso;
+})();
+
+// --- Sélection type de document ---
+document.querySelectorAll('#type-doc-groupe .choix').forEach(function (bloc) {
+  bloc.addEventListener('click', function () {
+    document.querySelectorAll('#type-doc-groupe .choix').forEach(function (b) {
+      b.classList.remove('actif');
+    });
+    bloc.classList.add('actif');
+    bloc.querySelector('input[type="radio"]').checked = true;
+  });
+});
+
+// --- Lignes répétables ---
+var compteur = 0;
+
+function ajouterLigne() {
+  compteur++;
+  var n = compteur;
+  var conteneur = document.getElementById('conteneur-lignes');
+  var div = document.createElement('div');
+  div.className = 'ligne';
+  div.id = 'ligne-' + n;
+  div.innerHTML =
+    '<div class="ligne-entete">' +
+      '<span class="ligne-num">Ligne ' + n + '</span>' +
+      '<button type="button" class="btn-supprimer" onclick="supprimerLigne(' + n + ')" title="Supprimer">✕</button>' +
+    '</div>' +
+    '<div class="ligne-grille">' +
+      '<div class="champ col-designation">' +
+        '<label>Désignation <span class="req">*</span></label>' +
+        '<input type="text" id="des-' + n + '" placeholder="ex : Pose carrelage sol, joint compris">' +
+      '</div>' +
+      '<div class="champ">' +
+        '<label>Qté <span class="req">*</span></label>' +
+        '<input type="number" id="qte-' + n + '" min="0" step="any" placeholder="1">' +
+      '</div>' +
+      '<div class="champ">' +
+        '<label>Unité <span class="req">*</span></label>' +
+        '<select id="uni-' + n + '">' +
+          '<option value="forfait">forfait</option>' +
+          '<option value="m²">m²</option>' +
+          '<option value="ml">ml</option>' +
+          '<option value="h">h</option>' +
+          '<option value="unité">unité</option>' +
+          '<option value="m">m</option>' +
+          '<option value="m³">m³</option>' +
+        '</select>' +
+      '</div>' +
+      '<div class="champ">' +
+        '<label>Prix unit. HT (€) <span class="req">*</span></label>' +
+        '<input type="number" id="pu-' + n + '" min="0" step="0.01" placeholder="0,00">' +
+      '</div>' +
+      '<div class="champ">' +
+        '<label>TVA <span class="req">*</span></label>' +
+        '<select id="tva-' + n + '">' +
+          '<option value="">-- Sélectionner --</option>' +
+          '<option value="20">20 %</option>' +
+          '<option value="10">10 %</option>' +
+          '<option value="5.5">5,5 %</option>' +
+          '<option value="0">0 % (franchise)</option>' +
+        '</select>' +
+      '</div>' +
+    '</div>';
+  conteneur.appendChild(div);
+}
+
+function supprimerLigne(n) {
+  var el = document.getElementById('ligne-' + n);
+  if (el) el.remove();
+}
+
+// Ligne initiale au chargement
+ajouterLigne();
+
+// --- Génération JSON + mailto ---
+function generer() {
+  var erreurBloc = document.getElementById('erreur-bloc');
+  erreurBloc.style.display = 'none';
+  var erreurs = [];
+
+  // Slug artisan
+  var slug = document.getElementById('artisan_slug').value.trim();
+  if (!slug) {
+    erreurs.push("L'identifiant artisan est obligatoire.");
+  } else if (!/^[a-z0-9-]+$/.test(slug)) {
+    erreurs.push("L'identifiant artisan ne doit contenir que des minuscules, chiffres et tirets, sans accents ni espaces.");
+  }
+
+  // Type document
+  var typeDocEl = document.querySelector('input[name="type_document"]:checked');
+  var typeDoc = typeDocEl ? typeDocEl.value : 'normale';
+
+  // Dates
+  var dateFacture = document.getElementById('date_facture').value;
+  if (!dateFacture) erreurs.push("La date de la facture est obligatoire.");
+  var dateEcheance = document.getElementById('date_echeance').value || null;
+
+  // Client
+  var nomPrenom     = document.getElementById('nom_prenom').value.trim() || null;
+  var raisonSociale = document.getElementById('raison_sociale').value.trim() || null;
+  var adresse       = document.getElementById('adresse').value.trim();
+  var adresseChant  = document.getElementById('adresse_chantier').value.trim() || null;
+  var telephone     = document.getElementById('telephone').value.trim();
+  var emailClient   = document.getElementById('email_client').value.trim();
+
+  if (!nomPrenom && !raisonSociale) erreurs.push("Nom/prénom ou raison sociale obligatoire.");
+  if (!adresse)    erreurs.push("L'adresse de facturation est obligatoire.");
+  if (!telephone)  erreurs.push("Le téléphone est obligatoire.");
+  if (!emailClient) erreurs.push("L'e-mail client est obligatoire.");
+
+  // Lignes
+  var lignesElements = document.querySelectorAll('#conteneur-lignes .ligne');
+  if (lignesElements.length === 0) {
+    erreurs.push("Au moins une ligne de facturation est requise.");
+  }
+
+  var lignes = [];
+  lignesElements.forEach(function (el) {
+    var n   = el.id.replace('ligne-', '');
+    var des = document.getElementById('des-' + n);
+    var qte = document.getElementById('qte-' + n);
+    var uni = document.getElementById('uni-' + n);
+    var pu  = document.getElementById('pu-'  + n);
+    var tva = document.getElementById('tva-' + n);
+
+    var desVal = des ? des.value.trim() : '';
+    var qteVal = qte ? qte.value       : '';
+    var uniVal = uni ? uni.value.trim() : '';
+    var puVal  = pu  ? pu.value        : '';
+    var tvaVal = tva ? tva.value       : '20';
+
+    if (!desVal) erreurs.push('Ligne ' + n + ' : la désignation est obligatoire.');
+    if (!qteVal) erreurs.push('Ligne ' + n + ' : la quantité est obligatoire.');
+    if (!puVal)  erreurs.push('Ligne ' + n + ' : le prix unitaire est obligatoire.');
+    if (!tvaVal) erreurs.push('Ligne ' + n + ' : le taux de TVA doit être sélectionné.');
+
+    lignes.push({
+      designation:      desVal,
+      quantite:         parseFloat(qteVal) || 0,
+      unite:            uniVal,
+      prix_unitaire_ht: parseFloat(puVal)  || 0,
+      tva:              parseFloat(tvaVal) || 0
+    });
+  });
+
+  if (erreurs.length > 0) {
+    var liste = erreurs.map(function (e) { return '<li>' + e + '</li>'; }).join('');
+    erreurBloc.innerHTML = '<strong>Champs manquants ou invalides :</strong><ul style="margin-top:0.4rem;padding-left:1.2rem">' + liste + '</ul>';
+    erreurBloc.style.display = 'block';
+    erreurBloc.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+
+  // Informations complémentaires
+  var infoComp = document.getElementById('info_comp').value.trim() || null;
+
+  // Assemblage du formulaire JSON
+  var formulaire = {
+    artisan_slug:   slug,
+    type_document:  typeDoc,
+    date_facture:   dateFacture,
+    devis_source: {
+      present: false,
+      numero:  null
+    },
+    client_final: {
+      nom_prenom:       nomPrenom,
+      raison_sociale:   raisonSociale,
+      adresse:          adresse,
+      adresse_chantier: adresseChant,
+      telephone:        telephone,
+      email:            emailClient
+    },
+    lignes: lignes,
+    informations_complementaires: infoComp
+  };
+
+  // date_echeance uniquement si renseignée (le pipeline calcule automatiquement sinon)
+  if (dateEcheance) {
+    formulaire.date_echeance = dateEcheance;
+  }
+
+  var jsonTexte = JSON.stringify(formulaire, null, 2);
+
+  // Mailto
+  var sujet = encodeURIComponent('Facture directe — ' + slug + ' — ' + dateFacture);
+  var corps = encodeURIComponent(
+    'Bonjour,\n\n' +
+    'Voici ma demande de facture directe.\n\n' +
+    '--- FORMULAIRE JSON (ne pas modifier) ---\n\n' +
+    jsonTexte + '\n\n' +
+    '--- FIN DU FORMULAIRE ---'
+  );
+
+  window.location.href = 'mailto:j.hoffman66@laposte.net?subject=' + sujet + '&body=' + corps;
+}
+</script>
+
+</body>
+</html>
