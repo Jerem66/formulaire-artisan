@@ -2,297 +2,335 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Préférences visuelles devis &amp; facture</title>
 <style>
+:root {
+  --bleu:        #1a4b8c;
+  --bleu-clair:  #2563b0;
+  --fond:        #f5f7fa;
+  --bordure:     #d1d5db;
+  --texte:       #1f2937;
+  --aide:        #6b7280;
+  --rouge:       #dc2626;
+}
+
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  font-family: Segoe UI, Arial, sans-serif;
-  font-size: 14px;
-  color: #222;
-  background: #efefef;
-  padding: 28px 20px 48px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--fond);
+  color: var(--texte);
+  line-height: 1.55;
 }
 
-h1 {
-  font-size: 17px;
-  font-weight: 600;
-  color: #1a1a1a;
-  margin-bottom: 6px;
+.entete {
+  background: var(--bleu);
+  color: white;
+  padding: 2rem 1.5rem;
+  text-align: center;
 }
-.subtitle {
-  font-size: 12px;
-  color: #888;
-  margin-bottom: 22px;
+.entete h1 { font-size: 1.55rem; font-weight: 700; }
+.entete p  { margin-top: 0.5rem; font-size: 0.92rem; opacity: 0.85; max-width: 560px; margin-inline: auto; }
+
+.conteneur {
+  max-width: 780px;
+  margin: 1.75rem auto;
+  padding: 0 1rem 4rem;
 }
 
-.bloc {
-  background: #fff;
-  border: 1px solid #d4d4d4;
-  border-radius: 4px;
-  padding: 18px 20px;
-  margin-bottom: 14px;
+.section {
+  background: white;
+  border: 1px solid var(--bordure);
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1.1rem;
 }
-.bloc h2 {
-  font-size: 11px;
+
+.section h2 {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--bleu);
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: #777;
-  font-weight: 600;
-  margin-bottom: 14px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid #eee;
+  margin-bottom: 1.2rem;
+  padding-bottom: 0.55rem;
+  border-bottom: 2px solid var(--bleu);
 }
 
-.field { margin-bottom: 11px; }
-.field:last-child { margin-bottom: 0; }
+.champ { margin-bottom: 1rem; }
+.champ:last-child { margin-bottom: 0; }
 
 label {
   display: block;
-  font-size: 12px;
-  color: #555;
-  margin-bottom: 4px;
+  font-size: 0.875rem;
   font-weight: 500;
+  margin-bottom: 0.3rem;
 }
-.req { color: #c0392b; margin-left: 2px; }
-.opt { color: #aaa; font-weight: 400; font-size: 11px; margin-left: 4px; }
-.note { font-size: 11px; color: #888; margin-top: 3px; font-style: italic; }
+
+.req { color: var(--rouge); margin-left: 2px; }
+.opt { color: var(--aide); font-weight: 400; font-size: 0.8rem; margin-left: 4px; }
+.aide { font-size: 0.78rem; color: var(--aide); margin-top: 0.28rem; font-style: italic; }
 
 input[type=text],
 input[type=email],
 textarea {
   width: 100%;
-  padding: 7px 9px;
-  border: 1px solid #ccc;
-  border-radius: 3px;
-  font-size: 13px;
+  padding: 0.52rem 0.72rem;
+  border: 1px solid var(--bordure);
+  border-radius: 6px;
+  font-size: 0.925rem;
   font-family: inherit;
-  color: #222;
-  background: #fff;
-  transition: border-color 0.15s;
+  color: var(--texte);
+  background: white;
+  transition: border-color 0.15s, box-shadow 0.15s;
 }
+
 input:focus, textarea:focus {
   outline: none;
-  border-color: #4a86c0;
-  box-shadow: 0 0 0 2px rgba(74,134,192,0.18);
+  border-color: var(--bleu-clair);
+  box-shadow: 0 0 0 3px rgba(37, 99, 176, 0.13);
 }
+
 input.err, textarea.err {
-  border-color: #c0392b !important;
+  border-color: var(--rouge) !important;
   background: #fff8f8;
 }
+
 textarea { resize: vertical; }
 
 /* Radios */
-.radios { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 4px; }
-.radio-item { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #333; cursor: pointer; }
-.radio-item input[type=radio] { width: 15px; height: 15px; cursor: pointer; accent-color: #2c6fad; }
+.radios { display: flex; flex-wrap: wrap; gap: 0.5rem 1.1rem; margin-top: 0.3rem; }
+.radio-item { display: flex; align-items: center; gap: 0.4rem; font-size: 0.9rem; color: var(--texte); cursor: pointer; }
+.radio-item input[type=radio] { width: 15px; height: 15px; cursor: pointer; accent-color: var(--bleu); }
 
 /* Checkbox seule */
-.check-item { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #333; cursor: pointer; font-weight: 400; }
-.check-item input[type=checkbox] { width: 15px; height: 15px; cursor: pointer; accent-color: #2c6fad; }
+.check-item { display: flex; align-items: center; gap: 0.4rem; font-size: 0.9rem; color: var(--texte); cursor: pointer; font-weight: 400; }
+.check-item input[type=checkbox] { width: 15px; height: 15px; cursor: pointer; accent-color: var(--bleu); }
+.champ .check-item { margin-top: 0.5rem; }
 
-/* Color row */
-.color-row { display: flex; gap: 10px; align-items: center; margin-top: 2px; }
+/* Champs couleur */
+.color-row { display: flex; gap: 0.7rem; align-items: center; margin-top: 0.3rem; }
 input[type=color] {
   width: 46px;
-  height: 34px;
+  height: 36px;
   padding: 2px 3px;
-  border: 1px solid #ccc;
-  border-radius: 3px;
+  border: 1px solid var(--bordure);
+  border-radius: 6px;
   cursor: pointer;
   flex-shrink: 0;
 }
 .color-row input[type=text] {
-  width: 120px;
+  width: 140px;
   font-family: monospace;
-  font-size: 13px;
 }
 
-/* Blocs conditionnels */
+/* Espacements post-aide */
+.aide + textarea { margin-top: 0.4rem; }
+#bloc_logo_desc  { margin-top: 0.4rem; }
+
+/* Bloc conditionnel */
 #bloc_devis_detail { display: none; }
 
-/* Actions */
-.actions { margin-top: 6px; }
+/* Bouton principal */
 .btn-gen {
+  display: block;
   width: 100%;
-  background: #2c6fad;
-  color: #fff;
+  padding: 0.95rem;
+  background: var(--bleu);
+  color: white;
   border: none;
-  border-radius: 4px;
-  padding: 12px 20px;
-  font-size: 15px;
-  font-family: inherit;
-  font-weight: 600;
+  border-radius: 8px;
+  font-size: 1.05rem;
+  font-weight: 700;
   cursor: pointer;
+  font-family: inherit;
   letter-spacing: 0.01em;
+  transition: background 0.15s;
 }
-.btn-gen:hover { background: #245d93; }
+.btn-gen:hover { background: var(--bleu-clair); }
 
 /* Notifications */
 .notif {
-  border-radius: 3px;
-  padding: 10px 14px;
-  font-size: 13px;
-  margin-bottom: 16px;
+  border-radius: 7px;
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  margin-bottom: 1.1rem;
   display: none;
 }
 .notif.err-box {
-  background: #fdf0ef;
-  border: 1px solid #e8b4b0;
-  color: #922b21;
+  background: #fef2f2;
+  border: 1px solid #fca5a5;
+  color: var(--rouge);
 }
 .notif.ok-box {
-  background: #eafaf1;
-  border: 1px solid #a9dfbf;
-  color: #1e8449;
+  background: #f0fdf4;
+  border: 1px solid #86efac;
+  color: #16a34a;
+}
+
+.note-bas {
+  text-align: center;
+  font-size: 0.79rem;
+  color: var(--aide);
+  margin-top: 2rem;
+  line-height: 1.6;
 }
 </style>
 </head>
 <body>
 
-<h1>Préférences visuelles devis &amp; facture</h1>
-<p class="subtitle">Ces informations permettent de créer les modèles de devis et de facture à votre image. Remplissez ce que vous savez — tout est facultatif sauf le nom de l'entreprise.</p>
-
-<div id="box-err" class="notif err-box"></div>
-<div id="box-ok"  class="notif ok-box"></div>
-
-<!-- Identification -->
-<div class="bloc">
-  <h2>Identification</h2>
-  <div class="field">
-    <label for="nom_entreprise">Nom de l'entreprise (ou votre nom si vous exercez en nom propre) <span class="req">*</span></label>
-    <input type="text" id="nom_entreprise" placeholder="Martin Plomberie">
-  </div>
+<div class="entete">
+  <h1>Préférences visuelles devis &amp; facture</h1>
+  <p>Ces informations permettent de créer les modèles de devis et de facture à votre image. Remplissez ce que vous savez — tout est facultatif sauf le nom de l'entreprise.</p>
 </div>
 
-<!-- Bloc 1 : Activités -->
-<div class="bloc">
-  <h2>Bloc 1 — Vos activités</h2>
+<div class="conteneur">
 
-  <div class="field">
-    <label>Clientèle principale <span class="req">*</span></label>
-    <div class="radios">
-      <label class="radio-item"><input type="radio" name="clientele" value="Particuliers"> Particuliers</label>
-      <label class="radio-item"><input type="radio" name="clientele" value="Professionnels"> Professionnels</label>
-      <label class="radio-item"><input type="radio" name="clientele" value="Mixte"> Mixte</label>
+  <div id="box-err" class="notif err-box"></div>
+  <div id="box-ok"  class="notif ok-box"></div>
+
+  <!-- Identification -->
+  <div class="section">
+    <h2>Identification</h2>
+    <div class="champ">
+      <label for="nom_entreprise">Nom de l'entreprise (ou votre nom si vous exercez en nom propre) <span class="req">*</span></label>
+      <input type="text" id="nom_entreprise" placeholder="Martin Plomberie">
     </div>
   </div>
 
-  <div class="field">
-    <label for="activite_principale">Activité principale <span class="req">*</span></label>
-    <input type="text" id="activite_principale" placeholder="Ex : Plombier chauffagiste, Carreleur, Électricien…">
-  </div>
+  <!-- Vos activités -->
+  <div class="section">
+    <h2>Vos activités</h2>
 
-  <div class="field">
-    <label for="activites_secondaires">Activités secondaires <span class="opt">(facultatif)</span></label>
-    <input type="text" id="activites_secondaires" placeholder="Apparaîtront en sous-titre sur votre devis et facture — ex : dépannage urgent, rénovation salle de bain">
-  </div>
-</div>
-
-<!-- Bloc 2 : Identité visuelle -->
-<div class="bloc">
-  <h2>Bloc 2 — Identité visuelle</h2>
-
-  <div class="field">
-    <label>Couleur principale du devis <span class="opt">(facultatif — celle de votre logo ou votre préférence)</span></label>
-    <div class="color-row">
-      <input type="color" id="couleur_picker" value="#2c6fad" oninput="syncHex(this.value)">
-      <input type="text"  id="couleur_hex"    value="#2c6fad" placeholder="#2c6fad" maxlength="7" oninput="syncPicker(this.value)">
+    <div class="champ">
+      <label>Clientèle principale <span class="req">*</span></label>
+      <div class="radios">
+        <label class="radio-item"><input type="radio" name="clientele" value="Particuliers"> Particuliers</label>
+        <label class="radio-item"><input type="radio" name="clientele" value="Professionnels"> Professionnels</label>
+        <label class="radio-item"><input type="radio" name="clientele" value="Mixte"> Mixte</label>
+      </div>
     </div>
-    <div class="note">Cliquez sur le carré de couleur ou saisissez un code hexadécimal (#RRGGBB).</div>
-  </div>
 
-  <div class="field">
-    <label>Couleur d'accent du devis <span class="opt">(facultatif — ex : couleur de vos véhicules ou logo secondaire)</span></label>
-    <div class="color-row">
-      <input type="color" id="accent_picker" value="#888888" oninput="syncAccentHex(this.value)">
-      <input type="text"  id="accent_hex"    placeholder="Laissez vide pour calcul automatique" maxlength="7" oninput="syncAccentPicker(this.value)">
+    <div class="champ">
+      <label for="activite_principale">Activité principale <span class="req">*</span></label>
+      <input type="text" id="activite_principale" placeholder="Ex : Plombier chauffagiste, Carreleur, Électricien…">
     </div>
-    <div class="note">Si non renseignée, la couleur d'accent sera calculée automatiquement depuis la couleur principale.</div>
-  </div>
 
-  <div class="field">
-    <label>Style du devis <span class="opt">(facultatif)</span></label>
-    <div class="radios" style="margin-top: 6px;">
-      <label class="radio-item"><input type="radio" name="style_devis" value="sobre" onchange="syncStyleFacture(this.value)"> Sobre et professionnel</label>
-      <label class="radio-item"><input type="radio" name="style_devis" value="moderne" onchange="syncStyleFacture(this.value)"> Moderne et technique</label>
-      <label class="radio-item"><input type="radio" name="style_devis" value="chaleureux" onchange="syncStyleFacture(this.value)"> Chaleureux et artisanal</label>
+    <div class="champ">
+      <label for="activites_secondaires">Activités secondaires <span class="opt">(facultatif)</span></label>
+      <input type="text" id="activites_secondaires" placeholder="Apparaîtront en sous-titre sur votre devis et facture — ex : dépannage urgent, rénovation salle de bain">
     </div>
   </div>
 
-  <div class="field">
-    <label>Couleur principale de la facture <span class="opt">(facultatif — identique au devis par défaut)</span></label>
-    <div class="color-row">
-      <input type="color" id="couleur_facture_picker" value="#2c6fad" oninput="couleurFactureManuel=true; syncCouleurFactureHex(this.value)">
-      <input type="text"  id="couleur_facture_hex"    value="#2c6fad" placeholder="#2c6fad" maxlength="7" oninput="couleurFactureManuel=true; syncCouleurFacturePicker(this.value)">
+  <!-- Identité visuelle -->
+  <div class="section">
+    <h2>Identité visuelle</h2>
+
+    <div class="champ">
+      <label>Couleur principale du devis <span class="opt">(facultatif — celle de votre logo ou votre préférence)</span></label>
+      <div class="color-row">
+        <input type="color" id="couleur_picker" value="#2c6fad" oninput="syncHex(this.value)">
+        <input type="text"  id="couleur_hex"    value="#2c6fad" placeholder="#2c6fad" maxlength="7" oninput="syncPicker(this.value)">
+      </div>
+      <p class="aide">Cliquez sur le carré de couleur ou saisissez un code hexadécimal (#RRGGBB).</p>
     </div>
-    <div class="note">Cliquez sur le carré de couleur ou saisissez un code hexadécimal (#RRGGBB).</div>
+
+    <div class="champ">
+      <label>Couleur d'accent du devis <span class="opt">(facultatif — ex : couleur de vos véhicules ou logo secondaire)</span></label>
+      <div class="color-row">
+        <input type="color" id="accent_picker" value="#888888" oninput="syncAccentHex(this.value)">
+        <input type="text"  id="accent_hex"    placeholder="Laissez vide pour calcul automatique" maxlength="7" oninput="syncAccentPicker(this.value)">
+      </div>
+      <p class="aide">Si non renseignée, la couleur d'accent sera calculée automatiquement depuis la couleur principale.</p>
+    </div>
+
+    <div class="champ">
+      <label>Style du devis <span class="opt">(facultatif)</span></label>
+      <div class="radios">
+        <label class="radio-item"><input type="radio" name="style_devis" value="sobre" onchange="syncStyleFacture(this.value)"> Sobre et professionnel</label>
+        <label class="radio-item"><input type="radio" name="style_devis" value="moderne" onchange="syncStyleFacture(this.value)"> Moderne et technique</label>
+        <label class="radio-item"><input type="radio" name="style_devis" value="chaleureux" onchange="syncStyleFacture(this.value)"> Chaleureux et artisanal</label>
+      </div>
+    </div>
+
+    <div class="champ">
+      <label>Couleur principale de la facture <span class="opt">(facultatif — identique au devis par défaut)</span></label>
+      <div class="color-row">
+        <input type="color" id="couleur_facture_picker" value="#2c6fad" oninput="couleurFactureManuel=true; syncCouleurFactureHex(this.value)">
+        <input type="text"  id="couleur_facture_hex"    value="#2c6fad" placeholder="#2c6fad" maxlength="7" oninput="couleurFactureManuel=true; syncCouleurFacturePicker(this.value)">
+      </div>
+      <p class="aide">Cliquez sur le carré de couleur ou saisissez un code hexadécimal (#RRGGBB).</p>
+    </div>
+
+    <div class="champ">
+      <label>Couleur d'accent de la facture <span class="opt">(facultatif — identique au devis par défaut)</span></label>
+      <div class="color-row">
+        <input type="color" id="accent_facture_picker" value="#888888" oninput="couleurFactureManuel=true; syncAccentFactureHex(this.value)">
+        <input type="text"  id="accent_facture_hex"    placeholder="Laissez vide pour calcul automatique" maxlength="7" oninput="couleurFactureManuel=true; syncAccentFacturePicker(this.value)">
+      </div>
+      <p class="aide">Si non renseignée, la couleur d'accent sera calculée automatiquement depuis la couleur principale de la facture.</p>
+    </div>
+
+    <div class="champ">
+      <label>Style de la facture <span class="opt">(facultatif — identique au devis par défaut)</span></label>
+      <p class="aide">Laissez identique si vous souhaitez la même mise en page pour les deux documents.</p>
+      <div class="radios">
+        <label class="radio-item"><input type="radio" name="style_facture" value="sobre" onchange="styleFactureManuel=true"> Sobre et professionnel</label>
+        <label class="radio-item"><input type="radio" name="style_facture" value="moderne" onchange="styleFactureManuel=true"> Moderne et technique</label>
+        <label class="radio-item"><input type="radio" name="style_facture" value="chaleureux" onchange="styleFactureManuel=true"> Chaleureux et artisanal</label>
+      </div>
+    </div>
+
+    <div class="champ">
+      <label for="mentions_confiance">Mentions de confiance à afficher <span class="opt">(facultatif — 3 à 5 lignes)</span></label>
+      <p class="aide">Listez les mentions exactes, une par ligne, que vous souhaitez voir apparaître sur vos devis et factures. Exemples : "Certifié RGE", "Garantie décennale", "Artisan local depuis 2015", "Devis gratuit sous 48h".</p>
+      <textarea id="mentions_confiance" rows="4" placeholder="Certifié RGE&#10;Garantie décennale&#10;Artisan local depuis 2015&#10;Devis gratuit sous 48h"></textarea>
+    </div>
+
+    <div class="champ">
+      <label>Votre logo <span class="opt">(facultatif)</span></label>
+      <p class="aide">Si vous avez déjà un logo et souhaitez le conserver, joignez son fichier (image) à ce mail — le template ne pourra pas être finalisé sans ce fichier. Si vous n'en avez pas ou préférez en créer un nouveau, décrivez ci-dessous celui que vous souhaitez, avec autant de détails que possible (objet, style, couleurs, ambiance).</p>
+      <div id="bloc_logo_desc">
+        <input type="text" id="logo_desc" placeholder="Ex : une scie circulaire stylisée, vue de face, dans un style moderne et épuré. Couleurs : vert foncé (#2E6B3E) et touche dorée (#C9A84C).">
+      </div>
+      <label class="check-item">
+        <input type="checkbox" id="sans_logo" onchange="toggleLogo(this.checked)"> Je ne souhaite pas de logo
+      </label>
+    </div>
   </div>
 
-  <div class="field">
-    <label>Couleur d'accent de la facture <span class="opt">(facultatif — identique au devis par défaut)</span></label>
-    <div class="color-row">
-      <input type="color" id="accent_facture_picker" value="#888888" oninput="couleurFactureManuel=true; syncAccentFactureHex(this.value)">
-      <input type="text"  id="accent_facture_hex"    placeholder="Laissez vide pour calcul automatique" maxlength="7" oninput="couleurFactureManuel=true; syncAccentFacturePicker(this.value)">
+  <!-- Vos documents actuels -->
+  <div class="section">
+    <h2>Vos documents actuels</h2>
+
+    <div class="champ">
+      <label>Avez-vous déjà des devis à votre nom ?</label>
+      <div class="radios">
+        <label class="radio-item"><input type="radio" name="devis_existants" value="oui" onchange="toggleDevis('oui')"> Oui</label>
+        <label class="radio-item"><input type="radio" name="devis_existants" value="non" onchange="toggleDevis('non')" checked> Non</label>
+      </div>
     </div>
-    <div class="note">Si non renseignée, la couleur d'accent sera calculée automatiquement depuis la couleur principale de la facture.</div>
-  </div>
 
-  <div class="field">
-    <label>Style de la facture <span class="opt">(facultatif — identique au devis par défaut)</span></label>
-    <div class="note">Laissez identique si vous souhaitez la même mise en page pour les deux documents.</div>
-    <div class="radios" style="margin-top: 6px;">
-      <label class="radio-item"><input type="radio" name="style_facture" value="sobre" onchange="styleFactureManuel=true"> Sobre et professionnel</label>
-      <label class="radio-item"><input type="radio" name="style_facture" value="moderne" onchange="styleFactureManuel=true"> Moderne et technique</label>
-      <label class="radio-item"><input type="radio" name="style_facture" value="chaleureux" onchange="styleFactureManuel=true"> Chaleureux et artisanal</label>
-    </div>
-  </div>
-
-  <div class="field">
-    <label for="mentions_confiance">Mentions de confiance à afficher <span class="opt">(facultatif — 3 à 5 lignes)</span></label>
-    <div class="note">Listez les mentions exactes, une par ligne, que vous souhaitez voir apparaître sur vos devis et factures. Exemples : "Certifié RGE", "Garantie décennale", "Artisan local depuis 2015", "Devis gratuit sous 48h".</div>
-    <textarea id="mentions_confiance" rows="4" placeholder="Certifié RGE&#10;Garantie décennale&#10;Artisan local depuis 2015&#10;Devis gratuit sous 48h" style="margin-top: 6px;"></textarea>
-  </div>
-
-  <div class="field">
-    <label>Votre logo <span class="opt">(facultatif)</span></label>
-    <div class="note">Si vous avez déjà un logo et souhaitez le conserver, joignez son fichier (image) à ce mail — le template ne pourra pas être finalisé sans ce fichier. Si vous n'en avez pas ou préférez en créer un nouveau, décrivez ci-dessous celui que vous souhaitez, avec autant de détails que possible (objet, style, couleurs, ambiance).</div>
-    <div id="bloc_logo_desc">
-      <input type="text" id="logo_desc" placeholder="Ex : une scie circulaire stylisée, vue de face, dans un style moderne et épuré. Couleurs : vert foncé (#2E6B3E) et touche dorée (#C9A84C)." style="margin-top: 6px;">
-    </div>
-    <label class="check-item" style="margin-top: 8px;">
-      <input type="checkbox" id="sans_logo" onchange="toggleLogo(this.checked)"> Je ne souhaite pas de logo
-    </label>
-  </div>
-</div>
-
-<!-- Bloc 3 : Documents existants -->
-<div class="bloc">
-  <h2>Bloc 3 — Vos documents actuels</h2>
-
-  <div class="field">
-    <label>Avez-vous déjà des devis à votre nom ?</label>
-    <div class="radios">
-      <label class="radio-item"><input type="radio" name="devis_existants" value="oui" onchange="toggleDevis('oui')"> Oui</label>
-      <label class="radio-item"><input type="radio" name="devis_existants" value="non" onchange="toggleDevis('non')" checked> Non</label>
+    <div id="bloc_devis_detail">
+      <div class="champ">
+        <label for="aime">Ce que vous aimez dans leur présentation <span class="opt">(facultatif)</span></label>
+        <textarea id="aime" rows="2" placeholder="Ex : la clarté des totaux, les couleurs, la mise en page…"></textarea>
+      </div>
+      <div class="champ">
+        <label for="ameliorer">Ce que vous voudriez améliorer <span class="opt">(facultatif)</span></label>
+        <textarea id="ameliorer" rows="2" placeholder="Ex : trop basique, manque de logo, police illisible…"></textarea>
+      </div>
     </div>
   </div>
 
-  <div id="bloc_devis_detail">
-    <div class="field">
-      <label for="aime">Ce que vous aimez dans leur présentation <span class="opt">(facultatif)</span></label>
-      <textarea id="aime" rows="2" placeholder="Ex : la clarté des totaux, les couleurs, la mise en page…"></textarea>
-    </div>
-    <div class="field">
-      <label for="ameliorer">Ce que vous voudriez améliorer <span class="opt">(facultatif)</span></label>
-      <textarea id="ameliorer" rows="2" placeholder="Ex : trop basique, manque de logo, police illisible…"></textarea>
-    </div>
-  </div>
-</div>
+  <button class="btn-gen" onclick="envoyer()">Envoyer mes préférences →</button>
 
-<div class="actions">
-  <button class="btn-gen" onclick="envoyer()">Envoyer mes préférences</button>
+  <p class="note-bas">
+    Ce formulaire génère une demande envoyée par e-mail à votre gestionnaire.<br>
+    Votre template sera produit après validation et revue avec vous.
+  </p>
+
 </div>
 
 <script>
@@ -748,9 +786,9 @@ function envoyer() {
     '    - border-radius : 4-6px (coins nets mais pas tranchants)',
     '    - fond en-tête : léger fond gris-bleu (#F4F7FA)',
     '    - lignes alt tableau : bleu très pâle (#EBF2FA)',
+    '    - footer : bordure supérieure colorée (couleur principale 30% opacité)',
     '    - bandeau : pastille carrée avec icône document',
     '    - icônes SVG : stroke-width 1.8, mélange plein/contour, angles droits',
-    '    - footer : bordure supérieure colorée (couleur principale 30% opacité)',
     '  chaleureux :',
     '    - border-radius : 10-14px partout (coins très arrondis)',
     '    - fond en-tête : teinte chaude dérivée de la couleur principale',
