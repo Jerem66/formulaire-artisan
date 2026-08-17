@@ -2,60 +2,75 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Demande de devis</title>
 <style>
+:root {
+  --bleu:        #1a4b8c;
+  --bleu-clair:  #2563b0;
+  --fond:        #f5f7fa;
+  --bordure:     #d1d5db;
+  --texte:       #1f2937;
+  --aide:        #6b7280;
+  --rouge:       #dc2626;
+}
+
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  font-family: Segoe UI, Arial, sans-serif;
-  font-size: 14px;
-  color: #222;
-  background: #efefef;
-  padding: 28px 20px 48px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--fond);
+  color: var(--texte);
+  line-height: 1.55;
 }
 
-h1 {
-  font-size: 17px;
-  font-weight: 600;
-  color: #1a1a1a;
-  margin-bottom: 6px;
+.entete {
+  background: var(--bleu);
+  color: white;
+  padding: 2rem 1.5rem;
+  text-align: center;
 }
-.subtitle {
-  font-size: 12px;
-  color: #888;
-  margin-bottom: 22px;
+.entete h1 { font-size: 1.55rem; font-weight: 700; }
+.entete p  { margin-top: 0.5rem; font-size: 0.92rem; opacity: 0.85; max-width: 560px; margin-inline: auto; }
+
+.conteneur {
+  max-width: 780px;
+  margin: 1.75rem auto;
+  padding: 0 1rem 4rem;
 }
 
-.bloc {
-  background: #fff;
-  border: 1px solid #d4d4d4;
-  border-radius: 4px;
-  padding: 18px 20px;
-  margin-bottom: 14px;
+.section {
+  background: white;
+  border: 1px solid var(--bordure);
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1.1rem;
 }
-.bloc h2 {
-  font-size: 11px;
+
+.section h2 {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--bleu);
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: #777;
-  font-weight: 600;
-  margin-bottom: 14px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid #eee;
+  margin-bottom: 1.2rem;
+  padding-bottom: 0.55rem;
+  border-bottom: 2px solid var(--bleu);
 }
 
-.field { margin-bottom: 11px; }
-.field:last-child { margin-bottom: 0; }
+.champ { margin-bottom: 1rem; }
+.champ:last-child { margin-bottom: 0; }
 
 label {
   display: block;
-  font-size: 12px;
-  color: #555;
-  margin-bottom: 4px;
+  font-size: 0.875rem;
   font-weight: 500;
+  margin-bottom: 0.3rem;
 }
-.req { color: #c0392b; margin-left: 2px; }
-.opt { color: #aaa; font-weight: 400; font-size: 11px; margin-left: 4px; }
+
+.req { color: var(--rouge); margin-left: 2px; }
+.opt { color: var(--aide); font-weight: 400; font-size: 0.8rem; margin-left: 4px; }
+.aide { font-size: 0.78rem; color: var(--aide); margin-top: 0.28rem; font-style: italic; }
 
 input[type=text],
 input[type=email],
@@ -64,215 +79,247 @@ input[type=number],
 textarea,
 select {
   width: 100%;
-  padding: 7px 9px;
-  border: 1px solid #ccc;
-  border-radius: 3px;
-  font-size: 13px;
+  padding: 0.52rem 0.72rem;
+  border: 1px solid var(--bordure);
+  border-radius: 6px;
+  font-size: 0.925rem;
   font-family: inherit;
-  color: #222;
-  background: #fff;
-  transition: border-color 0.15s;
+  color: var(--texte);
+  background: white;
+  transition: border-color 0.15s, box-shadow 0.15s;
 }
+
 input:focus, textarea:focus, select:focus {
   outline: none;
-  border-color: #4a86c0;
-  box-shadow: 0 0 0 2px rgba(74,134,192,0.18);
+  border-color: var(--bleu-clair);
+  box-shadow: 0 0 0 3px rgba(37, 99, 176, 0.13);
 }
+
 input.err, select.err, textarea.err {
-  border-color: #c0392b !important;
+  border-color: var(--rouge) !important;
   background: #fff8f8;
 }
-input[readonly] {
-  background: #f6f6f6;
-  color: #888;
-  cursor: default;
-}
+
 textarea { resize: vertical; }
 
-.row { display: flex; gap: 12px; }
-.row .field { flex: 1; }
+.grille-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+@media (max-width: 580px) { .grille-2 { grid-template-columns: 1fr; } }
 
-/* Lignes */
-.lignes-wrap { overflow-x: auto; }
+/* Lignes de prestation — table générée par JS */
+.lignes-wrap { overflow-x: auto; margin-bottom: 0.75rem; }
+
 table {
   width: 100%;
   border-collapse: collapse;
-  margin-bottom: 10px;
-  min-width: 620px;
+  min-width: 580px;
 }
+
 thead th {
-  background: #f4f4f4;
-  font-size: 11px;
-  font-weight: 600;
-  color: #666;
+  background: #f8fafc;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--aide);
   text-transform: uppercase;
-  letter-spacing: 0.04em;
-  padding: 7px 8px;
-  border-bottom: 2px solid #ddd;
+  letter-spacing: 0.05em;
+  padding: 0.55rem 0.6rem;
+  border-bottom: 2px solid var(--bordure);
   text-align: left;
   white-space: nowrap;
 }
+
 tbody td {
-  padding: 4px 4px;
-  border-bottom: 1px solid #f0f0f0;
+  padding: 0.35rem 0.4rem;
+  border-bottom: 1px solid #f3f4f6;
   vertical-align: middle;
 }
-.col-n  { width: 28px; text-align: center; color: #bbb; font-size: 12px; }
+
+tbody tr:last-child td { border-bottom: none; }
+
+.col-n   { width: 28px; text-align: center; color: var(--aide); font-size: 0.8rem; }
 .col-des { width: 40%; }
 .col-qty { width: 80px; }
 .col-un  { width: 110px; }
 .col-pu  { width: 120px; }
-.col-tva { width: 90px; }
-.col-del { width: 34px; text-align: center; }
+.col-tva { width: 100px; }
+.col-del { width: 36px; text-align: center; }
 
-tbody tr:last-child td { border-bottom: none; }
-
-.btn-add {
-  background: #f2f2f2;
-  border: 1px solid #c8c8c8;
-  border-radius: 3px;
-  padding: 6px 14px;
-  font-size: 13px;
-  cursor: pointer;
-  color: #444;
-  font-family: inherit;
-}
-.btn-add:hover { background: #e6e6e6; }
-
+/* Bouton supprimer ligne (class="btn-del" injecté par JS) */
 .btn-del {
   background: none;
   border: none;
-  color: #ccc;
-  font-size: 17px;
+  color: #9ca3af;
   cursor: pointer;
+  font-size: 1rem;
+  padding: 0.15rem 0.3rem;
+  border-radius: 4px;
   line-height: 1;
-  padding: 2px 5px;
+  transition: color 0.12s;
   font-family: inherit;
 }
-.btn-del:hover { color: #c0392b; }
+.btn-del:hover { color: var(--rouge); }
 
-/* Actions */
-.actions { margin-top: 6px; }
-.btn-gen {
+/* Bouton ajouter une ligne */
+.btn-add {
   width: 100%;
-  background: #2c6fad;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  padding: 12px 20px;
-  font-size: 15px;
-  font-family: inherit;
+  padding: 0.65rem 1rem;
+  background: none;
+  border: 2px dashed var(--bordure);
+  border-radius: 7px;
+  color: var(--bleu-clair);
+  font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
-  letter-spacing: 0.01em;
+  font-family: inherit;
+  transition: all 0.15s;
 }
-.btn-gen:hover { background: #245d93; }
+.btn-add:hover {
+  border-color: var(--bleu-clair);
+  background: #eff6ff;
+}
 
-/* Notifications */
+/* Bouton principal */
+.btn-gen {
+  display: block;
+  width: 100%;
+  padding: 0.95rem;
+  background: var(--bleu);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  letter-spacing: 0.01em;
+  transition: background 0.15s;
+}
+.btn-gen:hover { background: var(--bleu-clair); }
+
+/* Notifications (showErr / showOk JS) */
 .notif {
-  border-radius: 3px;
-  padding: 10px 14px;
-  font-size: 13px;
-  margin-bottom: 16px;
+  border-radius: 7px;
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  margin-bottom: 1.1rem;
   display: none;
 }
 .notif.err-box {
-  background: #fdf0ef;
-  border: 1px solid #e8b4b0;
-  color: #922b21;
+  background: #fef2f2;
+  border: 1px solid #fca5a5;
+  color: var(--rouge);
 }
 .notif.ok-box {
-  background: #eafaf1;
-  border: 1px solid #a9dfbf;
-  color: #1e8449;
+  background: #f0fdf4;
+  border: 1px solid #86efac;
+  color: #16a34a;
 }
 
+.note-bas {
+  text-align: center;
+  font-size: 0.79rem;
+  color: var(--aide);
+  margin-top: 2rem;
+  line-height: 1.6;
+}
 </style>
 </head>
 <body>
 
-<h1>Demande de devis</h1>
-<p class="subtitle">Remplissez le formulaire puis cliquez sur « Envoyer ma demande » — votre demande sera transmise par mail.</p>
-
-<div id="box-err" class="notif err-box"></div>
-<div id="box-ok"  class="notif ok-box"></div>
-
-<!-- Identification -->
-<div class="bloc">
-  <h2>Identification</h2>
-  <div class="field">
-    <label for="slug">Identifiant artisan <span class="req">*</span><span class="opt">ex : pellegrini-thermique</span></label>
-    <input type="text" id="slug" placeholder="pellegrini-thermique">
-  </div>
+<div class="entete">
+  <h1>Demande de devis</h1>
+  <p>Remplissez le formulaire puis cliquez sur « Envoyer ma demande » — votre demande sera transmise par mail.</p>
 </div>
 
-<!-- Bloc 1 : Client final -->
-<div class="bloc">
-  <h2>Bloc 1 — Client final</h2>
-  <div class="row">
-    <div class="field">
-      <label for="nom_prenom">Nom et prénom <span class="req">*</span><span class="opt">(particulier)</span></label>
-      <input type="text" id="nom_prenom" placeholder="Marc Vasseur">
-    </div>
-    <div class="field">
-      <label for="raison_sociale">Raison sociale <span class="opt">(professionnel)</span></label>
-      <input type="text" id="raison_sociale" placeholder="">
+<div class="conteneur">
+
+  <div id="box-err" class="notif err-box"></div>
+  <div id="box-ok"  class="notif ok-box"></div>
+
+  <!-- Identifiant artisan -->
+  <div class="section">
+    <h2>Identifiant artisan</h2>
+    <div class="champ">
+      <label for="slug">Identifiant technique <span class="req">*</span></label>
+      <input type="text" id="slug" placeholder="pellegrini-thermique">
+      <p class="aide">Exemples : pellegrini-thermique, lefevre-peinture, dupont-electricite</p>
     </div>
   </div>
-  <div class="field">
-    <label for="adresse">Adresse de facturation <span class="req">*</span></label>
-    <input type="text" id="adresse" placeholder="14 rue des Flamants, 13016 Marseille">
-  </div>
-  <div class="field">
-    <label for="adresse_chantier">Adresse d'intervention <span class="opt">(si différente de la facturation)</span></label>
-    <input type="text" id="adresse_chantier" placeholder="">
-  </div>
-  <div class="row">
-    <div class="field">
-      <label for="telephone">Téléphone <span class="req">*</span></label>
-      <input type="tel" id="telephone" placeholder="0612345678">
+
+  <!-- Client final -->
+  <div class="section">
+    <h2>Client final</h2>
+    <div class="grille-2">
+      <div class="champ">
+        <label for="nom_prenom">Nom et prénom <span class="req">*</span><span class="opt">(particulier)</span></label>
+        <input type="text" id="nom_prenom" placeholder="Marc Vasseur">
+      </div>
+      <div class="champ">
+        <label for="raison_sociale">Raison sociale <span class="opt">(professionnel)</span></label>
+        <input type="text" id="raison_sociale" placeholder="">
+      </div>
     </div>
-    <div class="field">
-      <label for="email">Email <span class="req">*</span></label>
-      <input type="email" id="email" placeholder="m.vasseur@example.fr">
+    <div class="champ">
+      <label for="adresse">Adresse de facturation <span class="req">*</span></label>
+      <input type="text" id="adresse" placeholder="14 rue des Flamants, 13016 Marseille">
+    </div>
+    <div class="champ">
+      <label for="adresse_chantier">Adresse d'intervention <span class="opt">(si différente de la facturation)</span></label>
+      <input type="text" id="adresse_chantier" placeholder="">
+    </div>
+    <div class="grille-2">
+      <div class="champ">
+        <label for="telephone">Téléphone <span class="req">*</span></label>
+        <input type="tel" id="telephone" placeholder="0612345678">
+      </div>
+      <div class="champ">
+        <label for="email">Email <span class="req">*</span></label>
+        <input type="email" id="email" placeholder="m.vasseur@example.fr">
+      </div>
     </div>
   </div>
-</div>
 
-<!-- Bloc 2 : Lignes -->
-<div class="bloc">
-  <h2>Bloc 2 — Lignes de prestation <span class="req">*</span></h2>
-  <div class="lignes-wrap">
-    <table>
-      <thead>
-        <tr>
-          <th class="col-n">#</th>
-          <th class="col-des">Désignation</th>
-          <th class="col-qty">Quantité</th>
-          <th class="col-un">Unité</th>
-          <th class="col-pu">Prix unit. HT (€)</th>
-          <th class="col-tva">TVA</th>
-          <th class="col-del"></th>
-        </tr>
-      </thead>
-      <tbody id="tbody"></tbody>
-    </table>
+  <!-- Lignes de prestation -->
+  <div class="section">
+    <h2>Lignes de prestation <span class="req">*</span></h2>
+    <div class="lignes-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th class="col-n">#</th>
+            <th class="col-des">Désignation</th>
+            <th class="col-qty">Quantité</th>
+            <th class="col-un">Unité</th>
+            <th class="col-pu">Prix unit. HT (€)</th>
+            <th class="col-tva">TVA</th>
+            <th class="col-del"></th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+    <button type="button" class="btn-add" onclick="ajouterLigne()">+ Ajouter une ligne</button>
   </div>
-  <button type="button" class="btn-add" onclick="ajouterLigne()">+ Ajouter une ligne</button>
-</div>
 
-<!-- Bloc 3 : Infos complémentaires -->
-<div class="bloc">
-  <h2>Bloc 3 — Message pour votre gestionnaire administratif <span class="opt">(facultatif)</span></h2>
-  <div class="field">
-    <textarea id="infos" rows="4" placeholder="Précisions utiles à la personne qui traite votre dossier : accès chantier, contraintes particulières, ou — si vous corrigez un devis déjà envoyé — précisez-le ici avec son numéro (ex. : « Ceci corrige le devis D2026-0001 »)."></textarea>
+  <!-- Message gestionnaire -->
+  <div class="section">
+    <h2>Message pour votre gestionnaire <span class="opt">(facultatif)</span></h2>
+    <div class="champ">
+      <textarea id="infos" rows="4" placeholder="Précisions utiles à la personne qui traite votre dossier : accès chantier, contraintes particulières, ou — si vous corrigez un devis déjà envoyé — précisez-le ici avec son numéro (ex. : « Ceci corrige le devis D2026-0001 »)."></textarea>
+    </div>
   </div>
-</div>
 
-<div class="actions">
-  <button class="btn-gen" onclick="generer()">Envoyer ma demande</button>
-</div>
+  <button class="btn-gen" onclick="generer()">Envoyer ma demande →</button>
 
+  <p class="note-bas">
+    Ce formulaire génère une demande envoyée par e-mail à votre gestionnaire.<br>
+    Votre devis sera produit après validation et vous sera transmis dans les meilleurs délais.
+  </p>
+
+</div>
 
 <script>
   var compteur = 0;
